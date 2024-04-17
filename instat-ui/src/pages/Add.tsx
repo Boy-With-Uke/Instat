@@ -2,10 +2,19 @@ import Sidebar from "../components/Sidebar";
 export default function Search() {
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <Sidebar />
-        <div className="col-10" style={{backgroundColor: "red"}}>
-          <h1>Add</h1>
+      <div className="container-fluid">
+        <div style={{ display: "flex" }}>
+          <Sidebar />
+          <div
+            className="col-11 main"
+            style={{
+              margin: "0px;",
+            }}
+          >
+            <div>
+              <h1>Add</h1>
+            </div>
+          </div>
         </div>
       </div>
     </>

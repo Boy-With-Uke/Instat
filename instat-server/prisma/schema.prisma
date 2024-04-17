@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id_product          Int    @id @default(autoincrement())
+  sh8_product         Int
+  sh2_product         Int
+  libelle_product     String
+  AnneeApparition     String
+  TrimestreApparition Int
+  flux                Flux[] // Relation one-to-many avec Flux
+
+  @@unique([sh8_product, libelle_product, sh2_product])
+}
+
+model Flux {
+  id_flux Int     @id @default(autoincrement())
+  produit Product @relation(fields: [sh8, libelle, sh2], references: [sh8_product, libelle_product, sh2_product])
+  sh8     Int
+  libelle String
+  sh2     Int
+
+  valeur                         Int
+  poids_net                      Int
+  quantite                       Int
+  prix_unitaire                  Int
+  prix_unitaire_moyenne_annuelle Int
+}
