@@ -1,10 +1,10 @@
 import Sidebar from "../components/Sidebar";
 import "../assets/main.css";
-import "../assets/searchBar.css"
+import "../assets/searchBar.css";
 export default function Search() {
   return (
     <>
-      <div className="container-fluid">
+      <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
         <div style={{ display: "flex" }}>
           <Sidebar />
           <div
@@ -14,10 +14,18 @@ export default function Search() {
             }}
           >
             <div>
-              <div className="row" style={{marginBottom: '20px', display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",}}>
+              <div
+              id="searchContainer"
+                className="row"
+                style={{
+                  marginBottom: "20px",
+
+                  display: "flex",
+
+                  flexDirection: "column",
+                  
+                }}
+              >
                 <div className="searchBox">
                   <input
                     className="searchInput"

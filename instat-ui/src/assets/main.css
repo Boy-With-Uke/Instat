@@ -1,5 +1,4 @@
 .main {
-  background-color: blue;
   margin-top: 20px;
   padding: 30px;
 }
@@ -11,16 +10,16 @@
 }
 thead th {
   color: white;
-  background-color: #003900 !important;
+  background-color: #003529 !important;
 
   border: none;
   border-right: white solid 1px;
 }
 tbody th,
 tr td {
-  color: #003900;
+  color: #003529;
   background-color: white;
-  border: 2px solid #003900 ;
+  border: 2px solid #003529 ;
 }
 
 .bordering-left {
@@ -31,4 +30,7 @@ tr td {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border: none;
+}
+#mainContainer{
+  height: 100vh;
 }
