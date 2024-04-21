@@ -95,7 +95,9 @@ router.delete("/delete/:sh8", async (req, res) => {
     });
     const message = "The product has been deleted successfully";
     res.json({ message });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send("Error deleting product, error: " + error);
+  }
 });
 
 export default router;

@@ -56,7 +56,7 @@ router.post("/new", async (req, res) => {
   try {
     const { sh8, type, annee, valeur, poids_net, quantite, prix_unitaire } =
       req.body;
-    if (!sh8 ||!valeur ||!poids_net ||!quantite ||!prix_unitaire) {
+    if (!sh8 || !valeur || !poids_net || !quantite || !prix_unitaire) {
       return res.status(400).json({ error: "Missing parameter" });
     }
 
@@ -98,10 +98,10 @@ router.put("/update/:id", async (req, res) => {
   const id_flux = parseInt(req.params.id);
   if (!id_flux || isNaN(id_flux)) {
     return res
-     .status(400)
-     .json({ error: "ID is required and must be a number" });
+      .status(400)
+      .json({ error: "ID is required and must be a number" });
   }
-  if (!valeur ||!poids_net ||!quantite ||!prix_unitaire) {
+  if (!valeur || !poids_net || !quantite || !prix_unitaire) {
     return res.status(400).json({ error: "Missing parameter" });
   }
   try {
@@ -132,6 +132,40 @@ router.put("/update/:id", async (req, res) => {
     res.json({ messsage, updateFlux });
   } catch (error) {
     console.log(`Error: ${error}`);
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const id_flux = parseInt(req.params.id);
+  if (!id_flux || isNaN(id_flux)) {
+    return res
+      .status(400)
+      .json({ error: "ID is required and must be a number" });
+  }
+  try {
+    const willDelete = await prisma.flux.findFirst({
+      where: { id_flux },
+      select: {
+        sh8: true,
+        type: true,
+        annee: true,
+      },
+    });
+
+    if (!willDelete) {
+      return res.status(400).json({ error: "The flux doesn't exist" });
+    }
+    const sh8 = willDelete?.sh8 as number;
+    const type = willDelete?.type as string;
+    const annee = willDelete?.annee as number;
+    await prisma.flux.delete({
+      where: { id_flux },
+    });
+    await updatePrixAnnuelle(sh8, annee, type);
+    const message = "The flux has been deleted successfully";
+    res.json({ message });
+  } catch (error) {
+    res.status(500).send("Error deleting flux, error: " + error);
   }
 });
 
