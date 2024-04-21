@@ -1,7 +1,10 @@
 import Sidebar from "../components/Sidebar";
 import "../assets/main.css";
 import "../assets/searchBar.css";
+import Select, { components } from "react-select";
+
 export default function Search() {
+  
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
@@ -14,8 +17,10 @@ export default function Search() {
             }}
           >
             <div>
+              <div className="filter">
+              </div>
               <div
-              id="searchContainer"
+                id="searchContainer"
                 className="row"
                 style={{
                   marginBottom: "20px",
@@ -23,7 +28,6 @@ export default function Search() {
                   display: "flex",
 
                   flexDirection: "column",
-                  
                 }}
               >
                 <div className="searchBox">

@@ -38,12 +38,14 @@ button:active {
 }
 
 .searchInput {
+
   border: none;
   background: none;
   outline: none;
-  color: white;
+  color: #003529;
   font-size: 15px;
   padding: 24px 46px 24px 26px;
+  min-width: 400px;
 }
 
 #searchContainer {

@@ -16,19 +16,21 @@ router.post("/new", async (req, res) => {
   try {
     const {
       sh8_product,
-      sh2_product,
       libelle_product,
       AnneeApparition,
       TrimestreApparition,
     } = req.body;
     if (
-      !sh2_product ||
       !libelle_product ||
-      !AnneeApparition ||
-      !TrimestreApparition
+      !sh8_product ||
+      !TrimestreApparition ||
+      !AnneeApparition
     ) {
       return res.status(400).json({ error: "Missing parameter" });
     }
+    const sh8_string = sh8_product.toString();
+    const sh2_string = sh8_string.slice(0, 2);
+    const sh2_product = parseInt(sh2_string);
     const product = await prisma.product.create({
       data: {
         sh8_product,
@@ -46,25 +48,23 @@ router.post("/new", async (req, res) => {
 });
 
 router.put("/put/:id", async (req, res) => {
-  const {
-    sh8_product,
-    sh2_product,
-    libelle_product,
-    AnneeApparition,
-    TrimestreApparition,
-  } = req.body;
+  const { sh8_product, libelle_product, AnneeApparition, TrimestreApparition } =
+    req.body;
   const id_product = parseInt(req.params.id);
   if (!id_product || isNaN(id_product)) {
     return res.status(400).json({ error: "Id must be a number" });
   }
   if (
-    !sh2_product ||
+    !sh8_product ||
     !libelle_product ||
     !AnneeApparition ||
     !TrimestreApparition
   ) {
     return res.status(400).json({ error: "Missing parameter" });
   }
+  const sh8_string = sh8_product.toString();
+  const sh2_string = sh8_string.slice(0, 2);
+  const sh2_product = parseInt(sh2_string);
   try {
     const updatedProduct = await prisma.product.update({
       where: { id_product },
@@ -75,6 +75,7 @@ router.put("/put/:id", async (req, res) => {
         AnneeApparition,
         TrimestreApparition,
       },
+      include: { flux: true },
     });
     const message = "The product has been updated successfully";
     res.json({ message, updatedProduct });
@@ -83,17 +84,17 @@ router.put("/put/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", async (req, res) => {
-  const id_product = parseInt(req.params.id);
-  if (!id_product || isNaN(id_product)) {
+router.delete("/delete/:sh8", async (req, res) => {
+  const sh8_product = parseInt(req.params.sh8);
+  if (!sh8_product || isNaN(sh8_product)) {
     return res.status(400).json({ error: "Id must be a number" });
   }
   try {
     await prisma.product.delete({
-      where: { id_product },
+      where: { sh8_product },
     });
     const message = "The product has been deleted successfully";
-    res.status(204).send(message);
+    res.json({ message });
   } catch (error) {}
 });
 
