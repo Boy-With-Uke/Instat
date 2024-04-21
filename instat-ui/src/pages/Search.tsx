@@ -3,6 +3,20 @@ import "../assets/main.css";
 import "../assets/searchBar.css";
 import Select, { components } from "react-select";
 
+type Flux = {
+  id_flux: number,
+  product_id: number,
+  sh8: number,
+  sh2: number,
+  type: string,
+  annee: number,
+  tri
+  libelle: string,
+  valeur: number,
+  poids_net: number,
+
+}
+
 export default function Search() {
   
   return (

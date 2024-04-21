@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -14,19 +14,21 @@ model Product {
   libelle_product     String
   AnneeApparition     Int
   TrimestreApparition Int
-  @@unique([sh8_product, id_product])
   flux                Flux[] // Relation one-to-many avec Flux
+
+  @@unique([sh8_product, id_product])
 }
 
 model Flux {
-  id_flux Int      @id @default(autoincrement()) @unique
-  produit Product? @relation(fields: [sh8,product_id], references: [sh8_product, id_product], onDelete: Cascade)
+  id_flux    Int      @id @unique @default(autoincrement())
+  produit    Product? @relation(fields: [sh8, product_id], references: [sh8_product, id_product], onDelete: Cascade, onUpdate: Cascade)
   product_id Int
-  sh8     Int
-  type    String
-  annee   Int
-  libelle String
-  sh2     Int
+  sh8        Int
+  type       String
+  annee      Int
+  trimestre Int
+  libelle    String
+  sh2        Int
 
   valeur                         Int
   poids_net                      Int

@@ -54,8 +54,16 @@ router.get("/", async (req, res) => {
 
 router.post("/new", async (req, res) => {
   try {
-    const { sh8, type, annee, valeur, poids_net, quantite, prix_unitaire } =
-      req.body;
+    const {
+      sh8,
+      type,
+      annee,
+      valeur,
+      poids_net,
+      quantite,
+      prix_unitaire,
+      trimestre,
+    } = req.body;
     if (!sh8 || !valeur || !poids_net || !quantite || !prix_unitaire) {
       return res.status(400).json({ error: "Missing parameter" });
     }
@@ -77,6 +85,7 @@ router.post("/new", async (req, res) => {
         product_id: associatedProduct?.id_product as number,
         type: type,
         annee: annee,
+        trimestre: trimestre,
         sh2: associatedProduct?.sh2_product as number,
         libelle: associatedProduct?.libelle_product as string,
         valeur: valeur,
@@ -94,14 +103,23 @@ router.post("/new", async (req, res) => {
 });
 
 router.put("/update/:id", async (req, res) => {
-  const { valeur, poids_net, quantite, prix_unitaire, type, annee } = req.body;
+  const { trimestre, valeur, poids_net, quantite, prix_unitaire, type, annee } =
+    req.body;
   const id_flux = parseInt(req.params.id);
   if (!id_flux || isNaN(id_flux)) {
     return res
       .status(400)
       .json({ error: "ID is required and must be a number" });
   }
-  if (!valeur || !poids_net || !quantite || !prix_unitaire) {
+  if (
+    !valeur ||
+    !poids_net ||
+    !quantite ||
+    !prix_unitaire ||
+    !type ||
+    !annee ||
+    !trimestre
+  ) {
     return res.status(400).json({ error: "Missing parameter" });
   }
   try {
@@ -120,6 +138,7 @@ router.put("/update/:id", async (req, res) => {
       data: {
         type,
         annee,
+        trimestre,
         valeur,
         poids_net,
         quantite,
