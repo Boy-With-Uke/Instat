@@ -51,7 +51,7 @@ tr td {
 
 .flux-table .iconz-left {
   color: #003529;
-  margin-left: 35%;
+  margin-left: 30%;
 }
 .flux-table .iconz-right {
   color: #003529;
@@ -71,7 +71,7 @@ tr td {
   border-radius: 10px;
 }
 .add-section .main {
-  margin-top: 80px;
+  margin-top: 20px;
 }
 
 /* PRODUCT ADD */
@@ -120,13 +120,13 @@ tr td {
   padding: 50px 30px 20px 30px;
 }
 
-.add-section .flux .left input {
+.add-section .flux input {
   border-radius: 20px;
   height: 60px;
 }
 
 .add-section .flux .left .row {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .add-section .flux .right {
@@ -138,7 +138,7 @@ tr td {
 }
 
 .add-section .flux .right .row {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 .add-section .flux .right .row .buttonRow {
   padding: 0 50px 0 50px;
@@ -154,9 +154,48 @@ tr td {
 .mainButton {
   color: white;
   background-color: #003529;
+  width: 150px;
   outline: none;
   border: none;
   font-size: 1.5rem;
   height: 70px;
   border-radius: 10px;
+}
+.flux .button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin-left: -820px;
+}
+.flux .mainButton {
+  color: white;
+  background-color: #003529;
+  width: 150px;
+  outline: none;
+  border: none;
+  font-size: 1.5rem;
+  height: 70px;
+  border-radius: 10px;
+}
+.main .product span {
+  color: #006850;
+  font-size: 1.5rem;
+  font-weight: bolder;
+}
+.main .flux span {
+  color: #006850;
+  font-size: 1.5rem;
+  font-weight: bolder;
+}
+.add-section .flux .right .row .mainButton:hover {
+  color: #fff;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 10px 20px;
+  transform: translateY(-3px);
+}
+/*button pressing effect*/
+.mainButton:active {
+  box-shadow: none;
+  transform: translateY(0);
 }

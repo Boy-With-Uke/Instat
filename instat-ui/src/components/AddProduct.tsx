@@ -43,15 +43,16 @@ export default function AddProduct() {
       <form className="product" onSubmit={(event) => handleAddProduct(event)}>
         <div className="col-6 left">
           <div className="row">
+            <span>Sh8</span>
             <input
               type="number"
               placeholder="sh8"
               required
-              value={sh8}
               onChange={(event) => setSh8(Number(event.target.value))}
             />
           </div>
           <div className="row">
+            <span>Annee d'apparition</span>
             <input
               type="number"
               placeholder="Annee d'apparition"
@@ -61,6 +62,7 @@ export default function AddProduct() {
             />
           </div>
           <div className="row">
+            <span>Trimestre d'apparition</span>
             <input
               type="number"
               placeholder="Trismestre d'apparition"
@@ -73,6 +75,7 @@ export default function AddProduct() {
         </div>
         <div className="col-6 right">
           <div className="row">
+            <span>Libelle</span>
             <textarea
               name=""
               id="libelle"
