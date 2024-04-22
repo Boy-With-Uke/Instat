@@ -19,7 +19,7 @@ tbody th,
 tr td {
   color: #003529;
   background-color: white;
-  border: 2px solid #003529 ;
+  border: 2px solid #003529;
 }
 
 .bordering-left {
@@ -31,7 +31,7 @@ tr td {
   border-bottom-right-radius: 10px;
   border: none;
 }
-#mainContainer{
+#mainContainer {
   height: 100vh;
 }
 
@@ -49,20 +49,114 @@ tr td {
   border-radius: 5px;
 }
 
-.flux-table .iconz-left{
+.flux-table .iconz-left {
   color: #003529;
   margin-left: 35%;
 }
-.flux-table .iconz-right{
+.flux-table .iconz-right {
   color: #003529;
   margin-left: 15px;
 }
 
-.product-table .iconz-left{
+.product-table .iconz-left {
   color: #003529;
   margin-left: 85%;
 }
-.product-table .iconz-right{
+.product-table .iconz-right {
   color: #003529;
   margin-left: 10px;
+}
+.add-section {
+  min-height: 100%;
+  border-radius: 10px;
+}
+.add-section .main {
+  margin-top: 80px;
+}
+
+/* PRODUCT ADD */
+
+.add-section .main .product {
+  display: flex;
+}
+
+.add-section .product .left {
+  margin-right: 5px;
+  padding: 50px 30px 20px 30px;
+}
+
+.add-section .product .left input {
+  border-radius: 20px;
+  height: 60px;
+}
+
+.add-section .product .left .row {
+  margin-bottom: 40px;
+}
+
+.add-section .product .right {
+  margin-left: 5px;
+  padding: 50px 30px 20px 30px;
+}
+.add-section .product .right #libelle {
+  border-radius: 20px;
+}
+
+.add-section .product .right .row {
+  margin-bottom: 25px;
+}
+.add-section .product .right .row .buttonRow {
+  padding: 0 50px 0 50px;
+}
+
+/* FLUX ADD */
+
+.add-section .main .flux {
+  display: flex;
+}
+
+.add-section .flux .left {
+  margin-right: 5px;
+  padding: 50px 30px 20px 30px;
+}
+
+.add-section .flux .left input {
+  border-radius: 20px;
+  height: 60px;
+}
+
+.add-section .flux .left .row {
+  margin-bottom: 40px;
+}
+
+.add-section .flux .right {
+  margin-left: 5px;
+  padding: 50px 30px 20px 30px;
+}
+.add-section .flux .right #libelle {
+  border-radius: 20px;
+}
+
+.add-section .flux .right .row {
+  margin-bottom: 25px;
+}
+.add-section .flux .right .row .buttonRow {
+  padding: 0 50px 0 50px;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 300px;
+  padding-left: 300px;
+}
+.mainButton {
+  color: white;
+  background-color: #003529;
+  outline: none;
+  border: none;
+  font-size: 1.5rem;
+  height: 70px;
+  border-radius: 10px;
 }
