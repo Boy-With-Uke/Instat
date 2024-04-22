@@ -1,24 +1,47 @@
 import Sidebar from "../components/Sidebar";
 import "../assets/main.css";
 import "../assets/searchBar.css";
-import Select, { components } from "react-select";
+import { useEffect, useState } from "react";
 
 type Flux = {
-  id_flux: number,
-  product_id: number,
-  sh8: number,
-  sh2: number,
-  type: string,
-  annee: number,
-  tri
-  libelle: string,
-  valeur: number,
-  poids_net: number,
-
-}
+  id_flux: number;
+  product_id: number;
+  sh8: number;
+  sh2: number;
+  type: string;
+  annee: number;
+  trimestre: number;
+  libelle: string;
+  valeur: number;
+  poids_net: number;
+  quantite: number;
+  prix_unitaire: number;
+  prix_unitaire_moyenne_annuelle: number;
+};
 
 export default function Search() {
-  
+  const [fluxs, setFluxs] = useState<Flux[]>([]);
+
+  useEffect(() => {
+    const fetchFlux = async () => {
+      try {
+        const reponse = await fetch("http://localhost:3000/api/instat/flux/");
+
+        const fluxs: Flux[] = await reponse.json();
+        setFluxs(fluxs);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchFlux();
+  }, []);
+
+
+
+
+
+
+
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
@@ -31,8 +54,7 @@ export default function Search() {
             }}
           >
             <div>
-              <div className="filter">
-              </div>
+              <div className="filter"></div>
               <div
                 id="searchContainer"
                 className="row"
@@ -149,38 +171,23 @@ export default function Search() {
                 </thead>
                 <br />
                 <tbody>
-                  <tr>
-                    <td>Ex</td>
-                    <td>2007</td>
-                    <td>1</td>
-                    <td>01042010</td>
-                    <td>
-                      Reproducteurs de race pure d'animaux vivants de l'espèce
-                      caprine
-                    </td>
-                    <td>2298375</td>
-                    <td>3300</td>
-                    <td>110</td>
-                    <td>696,48</td>
-                    <td>694,48</td>
-                    <td>01</td>
-                  </tr>
-                  <tr>
-                    <td>Ex</td>
-                    <td>2007</td>
-                    <td>1</td>
-                    <td>01042010</td>
-                    <td>
-                      Reproducteurs de race pure d'animaux vivants de l'espèce
-                      caprine
-                    </td>
-                    <td>2298375</td>
-                    <td>3300</td>
-                    <td>110</td>
-                    <td>696,48</td>
-                    <td>694,48</td>
-                    <td>01</td>
-                  </tr>
+                  {fluxs.map((flux) => (
+                    <>
+                      <tr>
+                        <td>{flux.type}</td>
+                        <td>{flux.annee}</td>
+                        <td>{flux.trimestre}</td>
+                        <td>{flux.sh8}</td>
+                        <td>{flux.libelle}</td>
+                        <td>{flux.valeur}</td>
+                        <td>{flux.poids_net}</td>
+                        <td>{flux.quantite}</td>
+                        <td>{flux.prix_unitaire}</td>
+                        <td>{flux.prix_unitaire_moyenne_annuelle}</td>
+                        <td>{flux.sh2}</td>
+                      </tr>
+                    </>
+                  ))}
                 </tbody>
               </table>
             </div>
