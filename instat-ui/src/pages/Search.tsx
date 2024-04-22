@@ -8,8 +8,12 @@ import { useState } from "react";
 
 export default function Search() {
   const [isFlux, setIsFlux] = useState(true);
-  function handleToogle() {
-    setIsFlux(!isFlux);
+  function handleToogleFlux() {
+    setIsFlux(true);
+    console.log(isFlux);
+  }
+  function handleToogleProduct() {
+    setIsFlux(false);
     console.log(isFlux);
   }
   return (
@@ -29,13 +33,13 @@ export default function Search() {
                   type="radio"
                   name="radio"
                   defaultChecked
-                  onClick={handleToogle}
+                  onClick={handleToogleFlux}
                 />
                 <span className="name">Flux</span>
               </label>
 
               <label className="radio">
-                <input type="radio" name="radio"onClick={handleToogle}/>
+                <input type="radio" name="radio"onClick={handleToogleProduct}/>
                 <span className="name">Produits</span>
               </label>
             </div>

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function SearchFlux() {
   type Flux = {
@@ -32,6 +34,29 @@ export default function SearchFlux() {
     };
     fetchFlux();
   });
+
+  const handleDelete = async (event: React.MouseEvent, fluxId: number) => {
+    event.stopPropagation();
+
+    try {
+      await fetch(
+        `http://localhost:3000/api/instat/flux/delete/${fluxId}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      const updatedFlux = fluxs.filter((flux) => flux.id_flux !== fluxId);
+      setFluxs(updatedFlux);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
+  function handleEdit() {
+    alert("edit");
+  }
 
   return (
     <div>
@@ -148,7 +173,7 @@ export default function SearchFlux() {
           </tr>
         </thead>
         <br />
-        <tbody>
+        <tbody className="flux-table">
           {fluxs.map((flux) => (
             <>
               <tr>
@@ -162,7 +187,19 @@ export default function SearchFlux() {
                 <td>{flux.quantite}</td>
                 <td>{flux.prix_unitaire}</td>
                 <td>{flux.prix_unitaire_moyenne_annuelle}</td>
-                <td>{flux.sh2}</td>
+                <td>
+                  {flux.sh2}
+                  <FontAwesomeIcon
+                    className="iconz-left"
+                    icon={faEdit}
+                    onClick={handleEdit}
+                  />{" "}
+                  <FontAwesomeIcon
+                    className="iconz-right"
+                    icon={faTrash}
+                    onClick={(event) => handleDelete(event, flux.id_flux)}
+                  />
+                </td>
               </tr>
             </>
           ))}

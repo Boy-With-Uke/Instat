@@ -48,3 +48,21 @@ tr td {
   border: 1px solid red;
   border-radius: 5px;
 }
+
+.flux-table .iconz-left{
+  color: #003529;
+  margin-left: 35%;
+}
+.flux-table .iconz-right{
+  color: #003529;
+  margin-left: 15px;
+}
+
+.product-table .iconz-left{
+  color: #003529;
+  margin-left: 85%;
+}
+.product-table .iconz-right{
+  color: #003529;
+  margin-left: 10px;
+}

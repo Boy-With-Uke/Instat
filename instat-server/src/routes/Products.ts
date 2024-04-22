@@ -84,14 +84,14 @@ router.put("/put/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete/:sh8", async (req, res) => {
-  const sh8_product = parseInt(req.params.sh8);
-  if (!sh8_product || isNaN(sh8_product)) {
+router.delete("/delete/:id", async (req, res) => {
+  const id_product = parseInt(req.params.id);
+  if (!id_product || isNaN(id_product)) {
     return res.status(400).json({ error: "Id must be a number" });
   }
   try {
     await prisma.product.delete({
-      where: { sh8_product },
+      where: { id_product: id_product},
     });
     const message = "The product has been deleted successfully";
     res.json({ message });
