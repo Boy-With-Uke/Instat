@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import Select from "react-select";
 export default function AddFlux() {
   const [sh8, setSh8] = useState(0);
   const [type, setType] = useState("");
@@ -13,35 +13,79 @@ export default function AddFlux() {
   const [quantite, setQuantite] = useState(0);
   const [prix, setPrix] = useState(0);
 
+  const fluxBase = [
+    { value: "E", label: "Exportation" },
+    { value: "I", label: "Importation" },
+  ];
+  const handleFluxChange = (selectedOption: any) => {
+    setType(selectedOption.value);
+  };
+
   const handleAddProduct = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const reponse = await fetch(
-        "http://localhost:3000/api/instat/flux/new",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sh8: sh8,
-            type: type,
-            annee: annee,
-            trimestre: trimestre,
-            valeur: valeur,
-            poids_net: poids,
-            quantite: quantite,
-            prix_unitaire: prix,
-          }),
-        }
-      );
+      const reponse = await fetch("http://localhost:3000/api/instat/flux/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sh8: sh8,
+          type: type,
+          annee: annee,
+          trimestre: trimestre,
+          valeur: valeur,
+          poids_net: poids,
+          quantite: quantite,
+          prix_unitaire: prix,
+        }),
+      });
       console.log(reponse);
       alert("Nouveau produits ajouter avec succes");
     } catch (e) {
       alert(e);
       console.log(e);
     }
+  };
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      width: 770,
+      height: "60px",
+      marginLeft: -10,
+      borderRadius: '20px',
+      border: "none",
+      outline: "none",
+      backgroundColor: "#003529",
+      color: "white",
+      "&:hover": {
+        border: "none",
+        outline: "none",
+      },
+      "&:select": {
+        backgroundColor: "red",
+        border: "none",
+        outline: "none",
+      },
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: "white",
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#003529" : "#fff",
+      color: state.isSelected ? "#fff" : "#003529",
+      "&:hover": {
+        backgroundColor: "#003529",
+        color: "#fff",
+      },
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      width: 770,
+    }),
   };
   return (
     <div className="main">
@@ -58,12 +102,15 @@ export default function AddFlux() {
           </div>
           <div className="row">
             <span>Type</span>
-            <input
-              type="text"
-              required
-              value={type}
-              onChange={(event) => setType(event.target.value)}
-            />
+            <Select
+              className=".custom-select"
+              defaultValue={{ value: "E", label: "Exportation" }}
+              options={fluxBase}
+              value={fluxBase.find((option) => option.value === type)}
+              onChange={handleFluxChange}
+              isSearchable={false}
+              styles={customStyles}
+            />{" "}
           </div>
           <div className="row">
             <span>Annee</span>

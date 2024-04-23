@@ -71,7 +71,7 @@ router.post("/new", async (req, res) => {
 
     const associatedProduct = await prisma.product.findFirst({
       where: {
-        sh8_product: sh8,
+        sh8_product: sh8.toString(),
       },
       select: {
         id_product: true,
@@ -95,7 +95,7 @@ router.post("/new", async (req, res) => {
         prix_unitaire: prix_unitaire,
       },
     });
-    await updatePrixAnnuelle(sh8 as string, annee, type);
+    await updatePrixAnnuelle(sh8.toString(), annee, type);
     const messsage = "Flux has been created successfully";
     res.json({ messsage, flux });
   } catch (error) {
