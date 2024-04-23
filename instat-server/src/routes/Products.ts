@@ -91,7 +91,7 @@ router.delete("/delete/:id", async (req, res) => {
   }
   try {
     await prisma.product.delete({
-      where: { id_product: id_product},
+      where: { id_product: id_product },
     });
     const message = "The product has been deleted successfully";
     res.json({ message });
@@ -99,5 +99,19 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(500).send("Error deleting product, error: " + error);
   }
 });
-
+router.get("/findOne/byLibelle/:searchQuery", async (req, res) => {
+  const searchQuery = req.params.searchQuery;
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        libelle_product: {
+          contains: searchQuery,
+        },
+      },
+    });
+    res.json(products);
+  } catch (error) {
+    res.status(500).send("Error finding the product, error: " + error);
+  }
+});
 export default router;

@@ -1,5 +1,6 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
@@ -187,5 +188,42 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(500).send("Error deleting flux, error: " + error);
   }
 });
+
+router.get(
+  "/findOne/byLibelle/:searchQuery/:type?/:annee?/:trimestre?",
+  async (req, res) => {
+    const searchQuery = req.params.searchQuery;
+    const type = req.params.type || "all";
+    const annee = req.params.annee || "all";
+    const trimestre = req.params.trimestre || "all";
+
+    try {
+      const whereClause: Prisma.FluxWhereInput = {
+        libelle: {
+          contains: searchQuery,
+        },
+      };
+
+      if (type !== "all") {
+        whereClause.type = type;
+      }
+
+      if (annee !== "all") {
+        whereClause.annee = parseInt(annee, 10);
+      }
+
+      if (trimestre !== "all") {
+        whereClause.trimestre = parseInt(trimestre, 10);
+      }
+
+      const products = await prisma.flux.findMany({
+        where: whereClause,
+      });
+      res.json(products);
+    } catch (error) {
+      res.status(500).send("Error finding the flux, error: " + error);
+    }
+  }
+);
 
 export default router;
