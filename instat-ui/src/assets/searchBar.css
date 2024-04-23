@@ -45,8 +45,3 @@ button:active {
   padding: 24px 46px 24px 26px;
   min-width: 400px;
 }
-
-#searchContainer {
-  padding-left: 20%;
-  padding-right: 20%;
-}

@@ -199,3 +199,25 @@ tr td {
   box-shadow: none;
   transform: translateY(0);
 }
+
+.searchContainer{
+  padding: 10px 10px 10px 10px;
+}
+
+.searchContainer .filter{
+  padding: 19px 10px 10px 10px;
+  display: flex;
+}
+.searchContainer .filter .custom-select{
+  margin-right: 10px;
+}
+.searchContainer .searchBox{
+  display: flex;
+}
+
+.labeling{
+  margin-top: 10px;
+  color: white;
+  font-size: 1.rem;
+  user-select: none;
+}

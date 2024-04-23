@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
+import Checkbox from "@mui/material/Checkbox";
 
 export default function SearchFlux() {
   type Flux = {
@@ -20,11 +21,12 @@ export default function SearchFlux() {
     prix_unitaire_moyenne_annuelle: number;
   };
   const fluxBase = [
-    { value: "All", label: "All" },
+    { value: "All", label: "Type" },
     { value: "E", label: "Exportation" },
     { value: "I", label: "Importation" },
   ];
   const trimestreBase = [
+    { value: "All", label: "Trimestre" },
     { value: "1", label: "1" },
     { value: "2", label: "2" },
     { value: "3", label: "3" },
@@ -43,7 +45,8 @@ export default function SearchFlux() {
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
-      width: 200,
+      width: 170,
+      marginRight: 10,
       border: "none",
       outline: "none",
       backgroundColor: "#003529",
@@ -68,7 +71,7 @@ export default function SearchFlux() {
     }),
     menu: (provided: any) => ({
       ...provided,
-      width: 200,
+      width: 170,
     }),
   };
   const [annneeOption, setAnneeOption] = useState("all");
@@ -96,7 +99,7 @@ export default function SearchFlux() {
           value: year.toString(),
           label: year.toString(),
         }));
-        const defaultAnnee = [{ value: "all", label: "All" }, ...yearOptions];
+        const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
         setFluxs(fluxs);
         setYearOptions(defaultAnnee);
       } catch (e) {
@@ -146,46 +149,55 @@ export default function SearchFlux() {
 
   return (
     <div>
-      <div className="filter">
-        <Select
-          defaultValue={{ value: "All", label: "All" }}
-          options={fluxBase}
-          value={fluxBase.find((option) => option.value === fluxOPtion)}
-          onChange={handleFluxChange}
-          isSearchable={false}
-          styles={customStyles}
-        />{" "}
-        <Select
-          defaultValue={{ value: "All", label: "All" }}
-          options={yearOptions}
-          value={yearOptions.find((option) => option.value === annneeOption)}
-          onChange={handleYearChange}
-          isSearchable={false}
-          styles={customStyles}
-        />{" "}
-        <Select
-          defaultValue={{ value: "All", label: "All" }}
-          options={trimestreBase}
-          value={trimestreBase.find(
-            (option) => option.value === trimestreOptions
-          )}
-          onChange={handleTrimestreChange}
-          isSearchable={false}
-          styles={customStyles}
-        />{" "}
-      </div>
       <div
-        id="searchContainer"
-        className="row"
+        className="row searchContainer"
         style={{
           marginBottom: "20px",
-
-          display: "flex",
-
-          flexDirection: "column",
         }}
       >
-        <div className="searchBox">
+        <div className="col-6 filter">
+          <Select
+            className=".custom-select"
+            defaultValue={{ value: "All", label: "Type" }}
+            options={fluxBase}
+            value={fluxBase.find((option) => option.value === fluxOPtion)}
+            onChange={handleFluxChange}
+            isSearchable={false}
+            styles={customStyles}
+          />{" "}
+          <Select
+            className=".custom-select"
+            defaultValue={{ value: "All", label: "Annee" }}
+            options={yearOptions}
+            value={yearOptions.find((option) => option.value === annneeOption)}
+            onChange={handleYearChange}
+            isSearchable={false}
+            styles={customStyles}
+          />{" "}
+          <Select
+            className=".custom-select"
+            defaultValue={{ value: "All", label: "Trimestre" }}
+            options={trimestreBase}
+            value={trimestreBase.find(
+              (option) => option.value === trimestreOptions
+            )}
+            onChange={handleTrimestreChange}
+            isSearchable={false}
+            styles={customStyles}
+          />{" "}
+          <Checkbox
+          id="w/search"
+            
+            sx={{
+              color: "#003529",
+              "&.Mui-checked": {
+                color: "#003529",
+              },
+            }}
+          />
+          <label className="labeling" htmlFor="w/search">Filtrage sans recherche</label>
+        </div>
+        <div className="col-6 searchBox">
           <input
             className="searchInput"
             type="text"
