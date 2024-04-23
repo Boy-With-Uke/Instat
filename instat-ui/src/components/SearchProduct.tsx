@@ -70,7 +70,7 @@ export default function SearchProduct() {
       }
     };
     fetchFlux();
-  }, []);
+  });
 
   const searching = async (
     event: React.MouseEvent,

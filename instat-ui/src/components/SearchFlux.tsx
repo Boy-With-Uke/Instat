@@ -3,6 +3,7 @@ import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 import Checkbox from "@mui/material/Checkbox";
+import { ChangeEvent } from "react";
 
 export default function SearchFlux() {
   type Flux = {
@@ -21,7 +22,7 @@ export default function SearchFlux() {
     prix_unitaire_moyenne_annuelle: number;
   };
   const fluxBase = [
-    { value: "All", label: "Type" },
+    { value: "all", label: "Type" },
     { value: "E", label: "Exportation" },
     { value: "I", label: "Importation" },
   ];
@@ -75,6 +76,7 @@ export default function SearchFlux() {
     }),
   };
   const [annneeOption, setAnneeOption] = useState("all");
+  const [without, setWithout] = useState(false);
   const handleFluxChange = (selectedOption: any) => {
     setfluxOPtion(selectedOption.value);
   };
@@ -108,6 +110,25 @@ export default function SearchFlux() {
     };
     fetchFlux();
   }, []);
+  useEffect(() => {
+    if (without) {
+      console.log(without);
+      const fetchFlux = async () => {
+        try {
+          const reponse = await fetch(
+            `http://localhost:3000/api/instat/flux/findMany/${fluxOPtion}/${annneeOption}/${trimestreOptions}`
+          );
+          const fluxs: Flux[] = await reponse.json();
+          setFluxs(fluxs);
+        } catch (e) {
+          console.log(e);
+        }
+      };
+      fetchFlux();
+    }
+  }, [without, fluxOPtion, annneeOption, trimestreOptions]);
+  
+  
 
   const searching = async (
     event: React.MouseEvent,
@@ -147,6 +168,10 @@ export default function SearchFlux() {
     alert("edit");
   }
 
+  function handleCheck(event: ChangeEvent<HTMLInputElement>) {
+    setWithout(event.target.checked);
+  }
+
   return (
     <div>
       <div
@@ -158,7 +183,7 @@ export default function SearchFlux() {
         <div className="col-6 filter">
           <Select
             className=".custom-select"
-            defaultValue={{ value: "All", label: "Type" }}
+            defaultValue={{ value: "all", label: "Type" }}
             options={fluxBase}
             value={fluxBase.find((option) => option.value === fluxOPtion)}
             onChange={handleFluxChange}
@@ -186,16 +211,18 @@ export default function SearchFlux() {
             styles={customStyles}
           />{" "}
           <Checkbox
-          id="w/search"
-            
+            id="w/search"
             sx={{
               color: "#003529",
               "&.Mui-checked": {
                 color: "#003529",
               },
             }}
+            onChange={handleCheck}
           />
-          <label className="labeling" htmlFor="w/search">Filtrage sans recherche</label>
+          <label className="labeling" htmlFor="w/search">
+            Filtrage sans recherche
+          </label>
         </div>
         <div className="col-6 searchBox">
           <input
@@ -247,7 +274,7 @@ export default function SearchFlux() {
         <tbody className="flux-table">
           {fluxs.map((flux) => (
             <>
-              <tr>
+              <tr key={flux.id_flux}>
                 <td>{flux.type}</td>
                 <td>{flux.annee}</td>
                 <td>{flux.trimestre}</td>

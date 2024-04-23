@@ -234,5 +234,33 @@ router.get(
     }
   }
 );
+router.get("/findMany/:type/:annee/:trimestre", async (req, res) => {
+  const type = req.params.type || "all";
+  const annee = req.params.annee || "all";
+  const trimestre = req.params.trimestre || "all";
+
+  try {
+    const whereClause: Prisma.FluxWhereInput = {};
+
+    if (type !== "all") {
+      whereClause.type = type;
+    }
+
+    if (annee !== "all") {
+      whereClause.annee = parseInt(annee, 10);
+    }
+
+    if (trimestre !== "all") {
+      whereClause.trimestre = parseInt(trimestre, 10);
+    }
+
+    const products = await prisma.flux.findMany({
+      where: whereClause,
+    });
+    res.json(products);
+  } catch (error) {
+    res.status(500).send("Error finding the flux, error: " + error);
+  }
+});
 
 export default router;
