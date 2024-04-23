@@ -24,10 +24,21 @@ export default function SearchFlux() {
     { value: "E", label: "Exportation" },
     { value: "I", label: "Importation" },
   ];
+  const trimestreBase = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
+  ];
 
   const [fluxs, setFluxs] = useState<Flux[]>([]);
+  const [yearOptions, setYearOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [trimestreOptions, setTrimestreOptions] = useState("all");
+
   const [querry, setQuerry] = useState("");
-  const [selectedOption, setSelectedOption] = useState("All");
+  const [fluxOPtion, setfluxOPtion] = useState("all");
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
@@ -59,8 +70,15 @@ export default function SearchFlux() {
       width: 200,
     }),
   };
-  const handleChange = (selectedOption: any) => {
-    setSelectedOption(selectedOption.value);
+  const [annneeOption, setAnneeOption] = useState("all");
+  const handleFluxChange = (selectedOption: any) => {
+    setfluxOPtion(selectedOption.value);
+  };
+  const handleYearChange = (selectedOption: any) => {
+    setAnneeOption(selectedOption.value);
+  };
+  const handleTrimestreChange = (selectedOption: any) => {
+    setTrimestreOptions(selectedOption.value);
   };
 
   useEffect(() => {
@@ -69,7 +87,15 @@ export default function SearchFlux() {
         const reponse = await fetch("http://localhost:3000/api/instat/flux/");
 
         const fluxs: Flux[] = await reponse.json();
+        const years = Array.from(new Set(fluxs.map((flux) => flux.annee)));
+
+        // Utiliser les années uniques
+        const yearOptions = years.map((year) => ({
+          value: year.toString(),
+          label: year.toString(),
+        }));
         setFluxs(fluxs);
+        setYearOptions(yearOptions);
       } catch (e) {
         console.log(e);
       }
@@ -77,16 +103,17 @@ export default function SearchFlux() {
     fetchFlux();
   }, []);
 
-
-
   const searching = async (
     event: React.MouseEvent,
-    searchQuerry: string
+    searchQuerry: string,
+    fluxQuerry: string,
+    yearQuery: string,
+    trimestreQuerry: string
   ) => {
     event.stopPropagation();
     try {
       const response = await fetch(
-        `http://localhost:3000/api/instat/flux/findOne/byLibelle/${searchQuerry}`
+        `http://localhost:3000/api/instat/flux/findOne/byLibelle/${searchQuerry}/${fluxQuerry}/${yearQuery}/${trimestreQuerry}`
       );
       const fluxs: Flux[] = await response.json();
       setFluxs(fluxs);
@@ -99,12 +126,9 @@ export default function SearchFlux() {
     event.stopPropagation();
 
     try {
-      await fetch(
-        `http://localhost:3000/api/instat/flux/delete/${fluxId}`,
-        {
-          method: "DELETE"
-        }
-      );
+      await fetch(`http://localhost:3000/api/instat/flux/delete/${fluxId}`, {
+        method: "DELETE",
+      });
 
       const updatedFlux = fluxs.filter((flux) => flux.id_flux !== fluxId);
       setFluxs(updatedFlux);
@@ -113,7 +137,6 @@ export default function SearchFlux() {
     }
   };
 
-
   function handleEdit() {
     alert("edit");
   }
@@ -121,11 +144,29 @@ export default function SearchFlux() {
   return (
     <div>
       <div className="filter">
-      <Select
+        <Select
           defaultValue={{ value: "All", label: "All" }}
           options={fluxBase}
-          value={fluxBase.find((option) => option.value === selectedOption)}
-          onChange={handleChange}
+          value={fluxBase.find((option) => option.value === fluxOPtion)}
+          onChange={handleFluxChange}
+          isSearchable={false}
+          styles={customStyles}
+        />{" "}
+        <Select
+          defaultValue={{ value: "All", label: "All" }}
+          options={yearOptions}
+          value={yearOptions.find((option) => option.value === annneeOption)}
+          onChange={handleYearChange}
+          isSearchable={false}
+          styles={customStyles}
+        />{" "}
+        <Select
+          defaultValue={{ value: "All", label: "All" }}
+          options={trimestreBase}
+          value={trimestreBase.find(
+            (option) => option.value === trimestreOptions
+          )}
+          onChange={handleTrimestreChange}
           isSearchable={false}
           styles={customStyles}
         />{" "}
@@ -146,12 +187,21 @@ export default function SearchFlux() {
             className="searchInput"
             type="text"
             name=""
-            placeholder="Search something"value={querry}
+            placeholder="Search something"
+            value={querry}
             onChange={(event) => setQuerry(event.target.value)}
           />
           <button
             className="searchButton"
-            onClick={(event) => searching(event, querry)}
+            onClick={(event) =>
+              searching(
+                event,
+                querry,
+                fluxOPtion,
+                annneeOption,
+                trimestreOptions
+              )
+            }
           >
             <FontAwesomeIcon icon={faSearch} />
           </button>
