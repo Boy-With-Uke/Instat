@@ -9,7 +9,7 @@ datasource db {
 
 model Product {
   id_product          Int    @id @default(autoincrement())
-  sh8_product         Int    @unique
+  sh8_product         String    @unique
   sh2_product         Int
   libelle_product     String
   AnneeApparition     Int
@@ -23,7 +23,7 @@ model Flux {
   id_flux    Int      @id @unique @default(autoincrement())
   produit    Product? @relation(fields: [sh8, product_id], references: [sh8_product, id_product], onDelete: Cascade, onUpdate: Cascade)
   product_id Int
-  sh8        Int
+  sh8        String
   type       String
   annee      Int
   trimestre Int

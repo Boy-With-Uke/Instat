@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
-const updatePrixAnnuelle = async (sh8: number, annee: number, type: string) => {
+const updatePrixAnnuelle = async (sh8: string, annee: number, type: string) => {
   try {
     // Recherche des occurrences avec le même sh8, année et type
     const fluxes = await prisma.flux.findMany({
@@ -82,7 +82,7 @@ router.post("/new", async (req, res) => {
     });
     const flux = await prisma.flux.create({
       data: {
-        sh8: associatedProduct?.sh8_product as number,
+        sh8: associatedProduct?.sh8_product as string,
         product_id: associatedProduct?.id_product as number,
         type: type,
         annee: annee,
@@ -95,7 +95,7 @@ router.post("/new", async (req, res) => {
         prix_unitaire: prix_unitaire,
       },
     });
-    await updatePrixAnnuelle(sh8 as number, annee, type);
+    await updatePrixAnnuelle(sh8 as string, annee, type);
     const messsage = "Flux has been created successfully";
     res.json({ messsage, flux });
   } catch (error) {
@@ -147,7 +147,7 @@ router.put("/update/:id", async (req, res) => {
       },
     });
 
-    await updatePrixAnnuelle(sh8 as number, annee, type);
+    await updatePrixAnnuelle(sh8 as string, annee, type);
     const messsage = "Flux has been updated successfully";
     res.json({ messsage, updateFlux });
   } catch (error) {
@@ -175,7 +175,7 @@ router.delete("/delete/:id", async (req, res) => {
     if (!willDelete) {
       return res.status(400).json({ error: "The flux doesn't exist" });
     }
-    const sh8 = willDelete?.sh8 as number;
+    const sh8 = willDelete?.sh8 as string;
     const type = willDelete?.type as string;
     const annee = willDelete?.annee as number;
     await prisma.flux.delete({
@@ -199,9 +199,18 @@ router.get(
 
     try {
       const whereClause: Prisma.FluxWhereInput = {
-        libelle: {
-          contains: searchQuery,
-        },
+        OR: [
+          {
+            libelle: {
+              contains: searchQuery,
+            },
+          },
+          {
+            sh8: {
+              contains: searchQuery,
+            },
+          },
+        ],
       };
 
       if (type !== "all") {

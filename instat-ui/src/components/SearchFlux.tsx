@@ -32,6 +32,7 @@ export default function SearchFlux() {
   ];
 
   const [fluxs, setFluxs] = useState<Flux[]>([]);
+
   const [yearOptions, setYearOptions] = useState<
     { value: string; label: string }[]
   >([]);
@@ -90,12 +91,14 @@ export default function SearchFlux() {
         const years = Array.from(new Set(fluxs.map((flux) => flux.annee)));
 
         // Utiliser les années uniques
+
         const yearOptions = years.map((year) => ({
           value: year.toString(),
           label: year.toString(),
         }));
+        const defaultAnnee = [{ value: "all", label: "All" }, ...yearOptions];
         setFluxs(fluxs);
-        setYearOptions(yearOptions);
+        setYearOptions(defaultAnnee);
       } catch (e) {
         console.log(e);
       }
