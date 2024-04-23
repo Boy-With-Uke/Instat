@@ -26,7 +26,7 @@ export default function SearchFlux() {
     { value: "I", label: "Importation" },
   ];
   const trimestreBase = [
-    { value: "All", label: "Trimestre" },
+    { value: "all", label: "Trimestre" },
     { value: "1", label: "1" },
     { value: "2", label: "2" },
     { value: "3", label: "3" },
@@ -176,7 +176,7 @@ export default function SearchFlux() {
           />{" "}
           <Select
             className=".custom-select"
-            defaultValue={{ value: "All", label: "Trimestre" }}
+            defaultValue={{ value: "all", label: "Trimestre" }}
             options={trimestreBase}
             value={trimestreBase.find(
               (option) => option.value === trimestreOptions
