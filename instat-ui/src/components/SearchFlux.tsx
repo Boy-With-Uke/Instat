@@ -127,8 +127,6 @@ export default function SearchFlux() {
       fetchFlux();
     }
   }, [without, fluxOPtion, annneeOption, trimestreOptions]);
-  
-  
 
   const searching = async (
     event: React.MouseEvent,
@@ -232,6 +230,7 @@ export default function SearchFlux() {
             placeholder="Search something"
             value={querry}
             onChange={(event) => setQuerry(event.target.value)}
+            disabled={without}
           />
           <button
             className="searchButton"

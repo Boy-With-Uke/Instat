@@ -225,10 +225,10 @@ router.get(
         whereClause.trimestre = parseInt(trimestre, 10);
       }
 
-      const products = await prisma.flux.findMany({
+      const fluxs = await prisma.flux.findMany({
         where: whereClause,
       });
-      res.json(products);
+      res.json(fluxs);
     } catch (error) {
       res.status(500).send("Error finding the flux, error: " + error);
     }

@@ -1,6 +1,7 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import { Prisma } from "@prisma/client";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -33,7 +34,7 @@ router.post("/new", async (req, res) => {
     const sh2_product = parseInt(sh2_string);
     const product = await prisma.product.create({
       data: {
-        sh8_product,
+        sh8_product: sh8_string,
         sh2_product,
         libelle_product,
         AnneeApparition,
@@ -43,7 +44,7 @@ router.post("/new", async (req, res) => {
     const message = "The product has been created successfully";
     res.json({ message, product });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json(`Error : ${error}`);
   }
 });
 
@@ -99,19 +100,73 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(500).send("Error deleting product, error: " + error);
   }
 });
-router.get("/findOne/byLibelle/:searchQuery", async (req, res) => {
-  const searchQuery = req.params.searchQuery;
+
+router.get(
+  "/findOne/byLibelle/:searchQuery/:annee?/:trimestre?",
+  async (req, res) => {
+    const searchQuery = req.params.searchQuery;
+    const annee = req.params.annee || "all";
+    const trimestre = req.params.trimestre || "all";
+
+    try {
+      const whereClause: Prisma.ProductWhereInput = {
+        OR: [
+          {
+            libelle_product: {
+              contains: searchQuery,
+            },
+          },
+          {
+            sh8_product: {
+              contains: searchQuery,
+            },
+          },
+        ],
+      };
+
+      if (annee !== "all") {
+        whereClause.AnneeApparition = parseInt(annee, 10);
+      }
+
+      if (trimestre !== "all") {
+        whereClause.TrimestreApparition = parseInt(trimestre, 10);
+      }
+
+      const products = await prisma.product.findMany({
+        where: whereClause,
+      });
+      res.json(products);2024
+    } catch (error) {
+      res.status(500).send("Error finding the flux, error: " + error);
+    }
+  }
+);
+
+
+router.get("/findMany/:annee/:trimestre", async (req, res) => {
+  const annee = req.params.annee || "all";
+  const trimestre = req.params.trimestre || "all";
+
   try {
+    const whereClause: Prisma.ProductWhereInput = {};
+
+    
+
+    if (annee !== "all") {
+      whereClause.AnneeApparition = parseInt(annee, 10);
+    }
+
+    if (trimestre !== "all") {
+      whereClause.TrimestreApparition = parseInt(trimestre, 10);
+    }
+
     const products = await prisma.product.findMany({
-      where: {
-        libelle_product: {
-          contains: searchQuery,
-        },
-      },
+      where: whereClause,
     });
     res.json(products);
   } catch (error) {
-    res.status(500).send("Error finding the product, error: " + error);
+    res.status(500).send("Error finding the flux, error: " + error);
   }
 });
+
 export default router;
