@@ -48,7 +48,7 @@ router.post("/new", async (req, res) => {
   }
 });
 
-router.put("/put/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   const { sh8_product, libelle_product, AnneeApparition, TrimestreApparition } =
     req.body;
   const id_product = parseInt(req.params.id);

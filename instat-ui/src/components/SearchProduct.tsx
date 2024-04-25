@@ -4,9 +4,16 @@ import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import "../assets/select.css";
 
-import ReactPaginate from "react-paginate";  
+import ReactPaginate from "react-paginate";
 import Checkbox from "@mui/material/Checkbox";
 import { ChangeEvent } from "react";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Modal from "react-bootstrap/Modal";
+import Row from "react-bootstrap/Row";
+
+import Form from "react-bootstrap/Form";
 
 export default function SearchProduct() {
   type Product = {
@@ -14,7 +21,7 @@ export default function SearchProduct() {
     sh8_product: string;
     sh2_product: number;
     libelle_product: string;
-    AnneeApparition: string;
+    AnneeApparition: number;
     TrimestreApparition: number;
   };
   const trimestreBase = [
@@ -42,6 +49,26 @@ export default function SearchProduct() {
   const itemsPerPage = 10;
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+
+  //EDIT
+  const [isShow, setIsShow] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [toEditSh8, setToEditSh8] = useState("");
+  const [toEditLibelle, setToEditLibelle] = useState("");
+  const [toEditAnnee, setToEditAnnee] = useState(0);
+  const [toEditTrim, setToEditTrim] = useState(0);
+
+  const handleEditClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsShow(true);
+    setToEditLibelle(product.libelle_product);
+    setToEditSh8(product.sh8_product);
+    setToEditTrim(product.TrimestreApparition);
+    setToEditAnnee(product.AnneeApparition);
+  };
+  function onHide() {
+    setIsShow(false);
+  }
 
   const customStyles = {
     control: (provided: any) => ({
@@ -166,8 +193,29 @@ export default function SearchProduct() {
     }
   };
 
-  const handleEdit = () => {
-    alert("edit");
+  const handleEdit = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    try {
+      await fetch(
+        `http://localhost:3000/api/instat/product/update/${selectedProduct?.id_product}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sh8_product: toEditSh8,
+            libelle_product: toEditLibelle,
+            AnneeApparition: toEditAnnee,
+            TrimestreApparition: toEditTrim
+          }),
+        }
+      );
+      alert(`the product ${selectedProduct?.libelle_product} has been updated`);
+      setIsShow(false);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
   };
   const handleTrimestreChange = (selectedOption: any) => {
     setTrimestreOptions(selectedOption.value);
@@ -178,6 +226,65 @@ export default function SearchProduct() {
 
   return (
     <div className="product-page">
+      <Modal show={isShow} onHide={onHide} className="modal" size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedProduct?.libelle_product}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="grid-example">
+          <Container>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Form.Label>Sh8</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={toEditSh8}
+                  onChange={(event) => setToEditSh8(event.target.value)}
+                />
+              </Col>
+              <Col xs={6} md={6}>
+                <Form.Label>Annee</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={toEditAnnee}
+                  onChange={(event) =>
+                    setToEditAnnee(Number(event.target.value))
+                  }
+                />
+              </Col>
+            </Row>
+
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Form.Label>Libele</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={toEditLibelle}
+                  onChange={(event) => setToEditLibelle(event.target.value)}
+                />
+              </Col>
+              <Col xs={6} md={6}>
+                <Form.Label>Trimestre</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Trismestre d'apparition"
+                  max={4}
+                  min={1}
+                  required
+                  value={toEditTrim}
+                  onChange={(event) =>
+                    setToEditTrim(Number(event.target.value))
+                  }
+                />
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleEdit}>
+            Enregistrer
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div
         className="row searchContainer"
         style={{
@@ -267,7 +374,7 @@ export default function SearchProduct() {
                 <FontAwesomeIcon
                   className="iconz-left"
                   icon={faEdit}
-                  onClick={handleEdit}
+                  onClick={() => handleEditClick(product)}
                 />{" "}
                 <FontAwesomeIcon
                   className="iconz-right"
