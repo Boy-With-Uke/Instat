@@ -4,6 +4,7 @@ import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import "../assets/select.css";
 
+import ReactPaginate from "react-paginate";  
 import Checkbox from "@mui/material/Checkbox";
 import { ChangeEvent } from "react";
 
@@ -16,11 +17,6 @@ export default function SearchProduct() {
     AnneeApparition: string;
     TrimestreApparition: number;
   };
-  const flux = [
-    { value: "All", label: "All" },
-    { value: "E", label: "Exportation" },
-    { value: "I", label: "Importation" },
-  ];
   const trimestreBase = [
     { value: "all", label: "Trimestre" },
     { value: "1", label: "1" },
@@ -40,6 +36,13 @@ export default function SearchProduct() {
   const [without, setWithout] = useState(false);
 
   const [annneeOption, setAnneeOption] = useState("all");
+
+  //  PAGINATION
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 10;
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
@@ -73,7 +76,6 @@ export default function SearchProduct() {
     }),
   };
 
-
   function handleCheck(event: ChangeEvent<HTMLInputElement>) {
     setWithout(event.target.checked);
   }
@@ -103,11 +105,6 @@ export default function SearchProduct() {
     fetchFlux();
   }, []);
 
-
-
-
-
-
   useEffect(() => {
     if (without) {
       console.log(without);
@@ -126,9 +123,6 @@ export default function SearchProduct() {
     }
   }, [without, annneeOption, trimestreOptions]);
 
-
-
-
   const handleYearChange = (selectedOption: any) => {
     setAnneeOption(selectedOption.value);
   };
@@ -146,7 +140,6 @@ export default function SearchProduct() {
         `http://localhost:3000/api/instat/product/findOne/byLibelle/${searchQuerry}/${yearQuery}/${trimestreQuerry}`
       );
 
-      
       const products: Product[] = await response.json();
       setProducts(products);
     } catch (error) {
@@ -178,6 +171,9 @@ export default function SearchProduct() {
   };
   const handleTrimestreChange = (selectedOption: any) => {
     setTrimestreOptions(selectedOption.value);
+  };
+  const handlePageChange = (selectedPage: { selected: number }) => {
+    setCurrentPage(selectedPage.selected);
   };
 
   return (
@@ -216,7 +212,8 @@ export default function SearchProduct() {
               "&.Mui-checked": {
                 color: "#003529",
               },
-            }}onChange={handleCheck}
+            }}
+            onChange={handleCheck}
           />
           <label className="labeling" htmlFor="w/search">
             Filtrage sans recherche
@@ -259,7 +256,7 @@ export default function SearchProduct() {
         </thead>
         <br />
         <tbody className="product-table">
-          {products.map((product) => (
+          {products.slice(startIndex, endIndex).map((product) => (
             <tr key={product.id_product}>
               <td>{product.sh8_product}</td>
               <td>{product.sh2_product}</td>
@@ -282,6 +279,27 @@ export default function SearchProduct() {
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          breakLabel={"..."}
+          pageCount={Math.ceil(products.length / itemsPerPage)}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageChange}
+          containerClassName={"pagination"}
+          pageClassName={"page-item"}
+          pageLinkClassName={"page-link"}
+          previousClassName={"page-item"}
+          previousLinkClassName={"page-link"}
+          nextClassName={"page-item"}
+          nextLinkClassName={"page-link"}
+          breakClassName={"page-item"}
+          breakLinkClassName={"page-link"}
+          activeClassName={"active"}
+        />
+      </div>
     </div>
   );
 }

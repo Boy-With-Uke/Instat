@@ -5,6 +5,13 @@ import Select from "react-select";
 import Checkbox from "@mui/material/Checkbox";
 import { ChangeEvent } from "react";
 import ReactPaginate from "react-paginate";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Modal from "react-bootstrap/Modal";
+import Row from "react-bootstrap/Row";
+
+import Form from "react-bootstrap/Form";
 
 export default function SearchFlux() {
   type Flux = {
@@ -24,6 +31,11 @@ export default function SearchFlux() {
   };
   const fluxBase = [
     { value: "all", label: "Type" },
+    { value: "E", label: "Exportation" },
+    { value: "I", label: "Importation" },
+  ];
+
+  const fluxBase2 = [
     { value: "E", label: "Exportation" },
     { value: "I", label: "Importation" },
   ];
@@ -50,10 +62,55 @@ export default function SearchFlux() {
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
+  //Modal
+  const [isShow, setIsShow] = useState(false);
+
+  //EDIT
+  const [selectedFlux, setSelectedFlux] = useState<Flux | null>(null);
+  const [toEditType, setToEditType] = useState("");
+  const [toEditAnnee, setToEditAnnee] = useState(0);
+  const [toEditTrim, setToEditTrim] = useState(0);
+  const [toEditValeur, setToEditValeur] = useState(0);
+  const [toEditPoids, setToEditPoids] = useState(0);
+  const [toEditQuantite, setToEditQuantite] = useState(0);
+  const [toEditPrix, setToEditPrix] = useState(0);
+
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
       width: 170,
+      marginRight: 10,
+      border: "none",
+      outline: "none",
+      backgroundColor: "#003529",
+      color: "white",
+      "&:hover": {
+        border: "none",
+        outline: "none",
+      },
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: "white",
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#003529" : "#fff",
+      color: state.isSelected ? "#fff" : "#003529",
+      "&:hover": {
+        backgroundColor: "#003529",
+        color: "#fff",
+      },
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      width: 170,
+    }),
+  };
+  const customStyles2 = {
+    control: (provided: any) => ({
+      ...provided,
+      width: "100%",
       marginRight: 10,
       border: "none",
       outline: "none",
@@ -92,6 +149,25 @@ export default function SearchFlux() {
   };
   const handleTrimestreChange = (selectedOption: any) => {
     setTrimestreOptions(selectedOption.value);
+  };
+
+  const handleEditClick = (flux: Flux) => {
+    setSelectedFlux(flux);
+    setIsShow(true);
+    setToEditType(flux.type);
+    setToEditAnnee(flux.annee);
+    setToEditTrim(flux.trimestre);
+    setToEditValeur(flux.valeur);
+    setToEditPoids(flux.poids_net);
+    setToEditPrix(flux.prix_unitaire);
+    setToEditQuantite(flux.quantite);
+  };
+  function onHide() {
+    setIsShow(false);
+  }
+
+  const handleEditTypeChange = (selectedOption: any) => {
+    setToEditType(selectedOption.value);
   };
 
   useEffect(() => {
@@ -169,9 +245,33 @@ export default function SearchFlux() {
     }
   };
 
-  function handleEdit() {
-    alert("edit");
-  }
+  const handleEdit = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    try {
+      await fetch(
+        `http://localhost:3000/api/instat/flux/update/${selectedFlux?.id_flux}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: toEditType,
+            annee: toEditAnnee,
+            trimestre: toEditTrim,
+            valeur: toEditValeur,
+            poids_net: toEditPoids,
+            quantite: toEditQuantite,
+            prix_unitaire: toEditPrix,
+          }),
+        }
+      );
+      alert(`the product ${selectedFlux?.libelle} has been updated}`);
+      setIsShow(false);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
+  };
 
   function handleCheck(event: ChangeEvent<HTMLInputElement>) {
     setWithout(event.target.checked);
@@ -183,6 +283,114 @@ export default function SearchFlux() {
 
   return (
     <div>
+      <Modal show={isShow} onHide={onHide} className="modal" size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedFlux?.libelle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="grid-example">
+          <Container>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Form.Label>Type de Flux</Form.Label>
+                <Select
+                  className=".custom-select"
+                  options={fluxBase2}
+                  defaultValue={fluxBase2.find(
+                    (option) => option.value === selectedFlux?.type
+                  )}
+                  value={fluxBase2.find(
+                    (option) => option.value === toEditType
+                  )}
+                  onChange={handleEditTypeChange}
+                  isSearchable={false}
+                  styles={customStyles2}
+                />{" "}
+              </Col>
+              <Col xs={6} md={6}>
+                <Form.Label>Annee</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={toEditAnnee}
+                  onChange={(event) =>
+                    setToEditAnnee(Number(event.target.value))
+                  }
+                />
+              </Col>
+            </Row>
+
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Form.Label>Trimestre</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Trismestre d'apparition"
+                  max={4}
+                  min={1}
+                  required
+                  value={toEditTrim}
+                  onChange={(event) =>
+                    setToEditTrim(Number(event.target.value))
+                  }
+                />
+              </Col>
+              <Col xs={6} md={6}>
+                <Form.Label>Valeur</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={toEditValeur}
+                  onChange={(event) =>
+                    setToEditValeur(Number(event.target.value))
+                  }
+                />
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Form.Label>Poids Net</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={1}
+                  required
+                  value={toEditPoids}
+                  onChange={(event) =>
+                    setToEditPoids(Number(event.target.value))
+                  }
+                />
+              </Col>
+              <Col xs={6} md={6}>
+                <Form.Label>Quantite</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={1}
+                  value={toEditQuantite}
+                  onChange={(event) =>
+                    setToEditQuantite(Number(event.target.value))
+                  }
+                />
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "20px", padding: "0 10% 0 10%" }}>
+              <Col xs={12} md={12}>
+                <Form.Label>Prix Unitaire</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={1}
+                  required
+                  value={toEditPrix}
+                  onChange={(event) =>
+                    setToEditPrix(Number(event.target.value))
+                  }
+                />
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleEdit}>
+            Enregistrer
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div
         className="row searchContainer"
         style={{
@@ -299,7 +507,7 @@ export default function SearchFlux() {
                 <FontAwesomeIcon
                   className="iconz-left"
                   icon={faEdit}
-                  onClick={handleEdit}
+                  onClick={() => handleEditClick(flux)}
                 />
                 <FontAwesomeIcon
                   className="iconz-right"

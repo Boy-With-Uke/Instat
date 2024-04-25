@@ -127,6 +127,7 @@ export default function AddFlux() {
               type="number"
               placeholder="Trismestre d'apparition"
               max={4}
+              min={1}
               required
               value={trimestre}
               onChange={(event) => setTrimestre(Number(event.target.value))}
