@@ -260,7 +260,7 @@ export default function SearchProduct() {
         <br />
         <tbody className="product-table">
           {products.map((product) => (
-            <tr>
+            <tr key={product.id_product}>
               <td>{product.sh8_product}</td>
               <td>{product.sh2_product}</td>
               <td>{product.libelle_product}</td>

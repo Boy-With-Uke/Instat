@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 import Checkbox from "@mui/material/Checkbox";
 import { ChangeEvent } from "react";
+import ReactPaginate from "react-paginate";
 
 export default function SearchFlux() {
   type Flux = {
@@ -43,6 +44,12 @@ export default function SearchFlux() {
 
   const [querry, setQuerry] = useState("");
   const [fluxOPtion, setfluxOPtion] = useState("all");
+  //  PAGINATION
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 10;
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
@@ -170,6 +177,10 @@ export default function SearchFlux() {
     setWithout(event.target.checked);
   }
 
+  const handlePageChange = (selectedPage: { selected: number }) => {
+    setCurrentPage(selectedPage.selected);
+  };
+
   return (
     <div>
       <div
@@ -271,37 +282,56 @@ export default function SearchFlux() {
         </thead>
         <br />
         <tbody className="flux-table">
-          {fluxs.map((flux) => (
-            <>
-              <tr key={flux.id_flux}>
-                <td>{flux.type}</td>
-                <td>{flux.annee}</td>
-                <td>{flux.trimestre}</td>
-                <td>{flux.sh8}</td>
-                <td>{flux.libelle}</td>
-                <td>{flux.valeur}</td>
-                <td>{flux.poids_net}</td>
-                <td>{flux.quantite}</td>
-                <td>{flux.prix_unitaire}</td>
-                <td>{flux.prix_unitaire_moyenne_annuelle}</td>
-                <td>
-                  {flux.sh2}
-                  <FontAwesomeIcon
-                    className="iconz-left"
-                    icon={faEdit}
-                    onClick={handleEdit}
-                  />{" "}
-                  <FontAwesomeIcon
-                    className="iconz-right"
-                    icon={faTrash}
-                    onClick={(event) => handleDelete(event, flux.id_flux)}
-                  />
-                </td>
-              </tr>
-            </>
+          {fluxs.slice(startIndex, endIndex).map((flux) => (
+            <tr key={flux.id_flux}>
+              <td>{flux.type}</td>
+              <td>{flux.annee}</td>
+              <td>{flux.trimestre}</td>
+              <td>{flux.sh8}</td>
+              <td>{flux.libelle}</td>
+              <td>{flux.valeur}</td>
+              <td>{flux.poids_net}</td>
+              <td>{flux.quantite}</td>
+              <td>{flux.prix_unitaire}</td>
+              <td>{flux.prix_unitaire_moyenne_annuelle}</td>
+              <td>
+                {flux.sh2}
+                <FontAwesomeIcon
+                  className="iconz-left"
+                  icon={faEdit}
+                  onClick={handleEdit}
+                />
+                <FontAwesomeIcon
+                  className="iconz-right"
+                  icon={faTrash}
+                  onClick={(event) => handleDelete(event, flux.id_flux)}
+                />
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          breakLabel={"..."}
+          pageCount={Math.ceil(fluxs.length / itemsPerPage)}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageChange}
+          containerClassName={"pagination"}
+          pageClassName={"page-item"}
+          pageLinkClassName={"page-link"}
+          previousClassName={"page-item"}
+          previousLinkClassName={"page-link"}
+          nextClassName={"page-item"}
+          nextLinkClassName={"page-link"}
+          breakClassName={"page-item"}
+          breakLinkClassName={"page-link"}
+          activeClassName={"active"}
+        />
+      </div>
     </div>
   );
 }

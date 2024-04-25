@@ -200,25 +200,60 @@ tr td {
   transform: translateY(0);
 }
 
-.searchContainer{
+.searchContainer {
   padding: 10px 10px 10px 10px;
   display: flex;
 }
 
-.searchContainer .filter{
+.searchContainer .filter {
   padding: 19px 10px 10px 10px;
   display: flex;
 }
-.searchContainer .filter .custom-select{
+.searchContainer .filter .custom-select {
   margin-right: 10px;
 }
-.searchContainer .searchBox{
+.searchContainer .searchBox {
   display: flex;
 }
 
-.labeling{
+.labeling {
   margin-top: 10px;
   color: white;
-  font-size: 1.rem;
+  font-size: 1rem;
   user-select: none;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 400px;
+  width: 80%;
+}
+.pagination .page-link {
+  color: #003529; /* Couleur du texte des pages */
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #003529; /* Couleur de fond de la page active */
+}
+
+.pagination .page-item .page-link:hover {
+  color: #003529; /* Couleur du texte des pages au survol */
+}
+
+.pagination .page-item .page-link:focus {
+  box-shadow: none;
+  color: white; /* Supprimer la mise en évidence du focus sur le lien */
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d; /* Couleur du texte des liens désactivés */
+}
+
+.pagination .page-link:focus {
+  outline: none; /* Supprimer le contour sur le focus */
+}
+
+.pagination .page-link {
+  border: none; /* Supprimer la bordure autour du lien */
 }
