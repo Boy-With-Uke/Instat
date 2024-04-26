@@ -36,3 +36,4 @@ model Flux {
   prix_unitaire                  Int
   prix_unitaire_moyenne_annuelle Int?
 }
+
