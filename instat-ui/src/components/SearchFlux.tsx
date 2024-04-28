@@ -446,7 +446,6 @@ export default function SearchFlux() {
             className="searchInput"
             type="text"
             name=""
-            placeholder="Search something"
             value={querry}
             onChange={(event) => setQuerry(event.target.value)}
             disabled={without}

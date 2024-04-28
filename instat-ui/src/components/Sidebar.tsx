@@ -4,6 +4,7 @@ import "../assets/sidebar.css";
 import {
   faAdd,
   faArrowRightFromBracket,
+  faBell,
   faChartColumn,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
@@ -30,6 +31,11 @@ export default function Nav() {
       </div>
 
       <div className="bottomSection">
+        <Link to={"/notifications"}>
+          <div className="circle">
+            <FontAwesomeIcon className="icon" icon={faBell} />
+          </div>
+        </Link>
         <Link to={"/logout"}>
           <div className="circle">
             <FontAwesomeIcon className="icon" icon={faArrowRightFromBracket} />

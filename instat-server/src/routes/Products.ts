@@ -135,13 +135,13 @@ router.get(
       const products = await prisma.product.findMany({
         where: whereClause,
       });
-      res.json(products);2024
+      res.json(products);
+      2024;
     } catch (error) {
       res.status(500).send("Error finding the flux, error: " + error);
     }
   }
 );
-
 
 router.get("/findMany/:annee/:trimestre", async (req, res) => {
   const annee = req.params.annee || "all";
@@ -149,8 +149,6 @@ router.get("/findMany/:annee/:trimestre", async (req, res) => {
 
   try {
     const whereClause: Prisma.ProductWhereInput = {};
-
-    
 
     if (annee !== "all") {
       whereClause.AnneeApparition = parseInt(annee, 10);
