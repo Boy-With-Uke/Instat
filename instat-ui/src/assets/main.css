@@ -257,3 +257,38 @@ tr td {
 .pagination .page-link {
   border: none; /* Supprimer la bordure autour du lien */
 }
+
+/* DASHBOARD */
+.dash-section {
+  padding: 10px 40px 10px 40px;
+  height: 87vh;
+}
+
+.dash-section .top {
+  margin-bottom: 20px;
+  min-height: 45%;
+}
+.dash-section .bottom {
+  min-height: 45%;
+  border-radius: 10px;
+}
+
+.dash-section .top .left {
+  width: 47.5%;
+  border-radius: 10px;
+  margin-right: 5%;
+}
+
+.dash-section .top .right {
+  width: 47.5%;
+  border-radius: 10px;
+}
+
+.dash-section .midle{
+  background-color: grey;
+  height: 7%;
+  padding: 5px 10px 10px 10px;
+}
+.dash-section .midle .right {
+  padding-left: 260px;
+}
