@@ -51,7 +51,7 @@ export default function AddFlux() {
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
-      width: 770,
+      width: '103%',
       height: "60px",
       marginLeft: -10,
       borderRadius: '20px',
@@ -100,10 +100,10 @@ export default function AddFlux() {
               onChange={(event) => setSh8(Number(event.target.value))}
             />
           </div>
-          <div className="row">
+          <div className="row selectRow">
             <span>Type</span>
             <Select
-              className=".custom-select"
+              className="custom-select"
               defaultValue={{ value: "E", label: "Exportation" }}
               options={fluxBase}
               value={fluxBase.find((option) => option.value === type)}

@@ -144,6 +144,9 @@ tr td {
   padding: 0 50px 0 50px;
 }
 
+/* .add-section .flux .left .selectRow{
+  background-color: blue;
+} */
 .buttonRow {
   display: flex;
   justify-content: center;
