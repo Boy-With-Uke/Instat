@@ -12,6 +12,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import { title } from "process";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -23,7 +24,9 @@ ChartJS.register(
 );
 
 export default function Dashboard() {
-  const [data, setData] = useState([]);
+  const [dataRight, setDataRight] = useState([]);
+  const [dataLeft, setDataLeft] = useState([]);
+
   const [trimestre, setTrimestre] = useState(
     Math.ceil((new Date().getMonth() + 1) / 3)
   );
@@ -36,11 +39,21 @@ export default function Dashboard() {
         const response = await fetch("http://localhost:3000/api/instat/flux/");
 
         const dataJson = await response.json();
+        const filteredDataAllyear = dataJson.filter(
+          (flux: any) => flux.type === type
+        );
+
+        setDataLeft(filteredDataAllyear);
+        //console.log(filteredDataAllyear);
+
         const filteredFluxsThisyear = dataJson.filter(
           (flux: any) =>
-            flux.annee === annee
+            flux.annee === annee &&
+            flux.type === type &&
+            flux.trimestre === trimestre
         );
-        setData(filteredFluxs);
+        setDataRight(filteredFluxsThisyear);
+        console.log(filteredFluxsThisyear);
       } catch (error) {
         console.log(error);
       }
@@ -48,7 +61,8 @@ export default function Dashboard() {
     fetchFlux();
   }, [annee, trimestre, type]);
 
-  const topThreeLocations = data.reduce((acc: any, item: any) => {
+  // --------------------------RIGHT--------------------------
+  const topThreeLocations = dataRight.reduce((acc: any, item: any) => {
     if (!acc[item.libelle]) {
       acc[item.libelle] = 0;
     }
@@ -75,7 +89,41 @@ export default function Dashboard() {
     ],
   };
 
-  const barOptions = {
+  // --------------------------LEFT--------------------------
+
+  const top5AllYear = dataLeft.reduce((acc: any, item: any) => {
+    if (!acc[item.libelle]) {
+      acc[item.libelle] = 0;
+    }
+    acc[item.libelle] += item.valeur;
+    return acc;
+  }, {});
+
+  const sortedTop5Product = Object.entries(top5AllYear)
+    .sort((a: any, b: any) => b[1] - a[1])
+    .slice(0, 5);
+  const LonglibellesLeft = sortedTop5Product.map(([libelle]) => libelle);
+  const valeursLeft = sortedTop5Product.map(([_, valeur]) => valeur);
+
+  const libellesLeft = LonglibellesLeft.map((libelle) => libelle.split(" "));
+
+  const barDataTop5ProductAllYear = {
+    labels: libellesLeft,
+    datasets: [
+      {
+        data: valeursLeft,
+        backgroundColor: [
+          "#003529",
+          "#006329",
+          "#008329",
+          "#003529",
+          "#006329",
+        ],
+      },
+    ],
+  };
+
+  const barOptions1 = {
     maintainAspectRatio: false,
     responsive: true,
     animation: {
@@ -87,9 +135,46 @@ export default function Dashboard() {
       legend: {
         display: true,
       },
+      title: {
+        display: true,
+        text: `Top 5 des produits les plus ${
+          type === "E" ? "exporter" : "importer"
+        } annees confondues`,
+        fontSize: 24,
+        fontColor: "white",
+      },
     },
   };
 
+  const barOptions2 = {
+    maintainAspectRatio: false,
+    responsive: true,
+    animation: {
+      animateRotate: true, // Active l'animation de rotation
+      animateScale: true, // Active l'animation de mise à l'échelle
+      duration: 1000, // Définit la durée de l'animation en millisecondes (par exemple, 1000 pour une seconde)
+    },
+    plugins: {
+      legend: {
+        display: true,
+      },
+      title: {
+        display: true,
+        text: `Top 3 des produits les plus ${
+          type === "E" ? "exporter" : "importer"
+        } ce trimestre, annee : ${annee}`,
+        fontSize: 24,
+        fontColor: "white",
+      },
+    },
+  };
+
+  function handleExp() {
+    setType("E");
+  }
+  function handleImp() {
+    setType("I");
+  }
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
@@ -101,24 +186,19 @@ export default function Dashboard() {
               margin: "0px;",
             }}
           >
-            <div className="dash-section" style={{ backgroundColor: "red" }}>
+            <div className="dash-section" >
               <div className="row top">
                 <div
                   className="col-6 left"
-                  style={{ backgroundColor: "green" }}
                 >
-                  <Bar
-                    data={barDataTop3ProductinTheactualYear}
-                    options={barOptions}
-                  />
+                  <Bar data={barDataTop5ProductAllYear} options={barOptions1} />
                 </div>
                 <div
                   className="col-6 right"
-                  style={{ backgroundColor: "blue" }}
                 >
                   <Doughnut
                     data={barDataTop3ProductinTheactualYear}
-                    options={barOptions}
+                    options={barOptions2}
                   />
                 </div>
               </div>
@@ -127,27 +207,25 @@ export default function Dashboard() {
                 className="row midle
               "
               >
-                <div className="col-6 left"> </div>
-                <div className="col-6 right">
-                  <div
-                    className="radio-inputs"
-                    style={{ marginBottom: "20px" }}
-                  >
-                    <label className="radio">
-                      <input defaultChecked type="radio" name="radio" />
-                      <span className="name">Flux</span>
-                    </label>
+                <div className="radio-inputs">
+                  <label className="radio">
+                    <input
+                      defaultChecked
+                      type="radio"
+                      name="radio"
+                      onClick={handleImp}
+                    />
+                    <span className="name">Importations</span>
+                  </label>
 
-                    <label className="radio">
-                      <input type="radio" name="radio" />
-                      <span className="name">Produits</span>
-                    </label>
-                  </div>
+                  <label className="radio">
+                    <input type="radio" name="radio" onClick={handleExp} />
+
+                    <span className="name">Exportation</span>
+                  </label>
                 </div>
               </div>
-              <div className="row bottom" style={{ backgroundColor: "yellow" }}>
-                bottom
-              </div>
+              <div className="row bottom">bottom</div>
             </div>
           </div>
         </div>
