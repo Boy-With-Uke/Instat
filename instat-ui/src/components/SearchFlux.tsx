@@ -397,7 +397,7 @@ export default function SearchFlux() {
           marginBottom: "20px",
         }}
       >
-        <div className="col-6 filter">
+        <div className="col-8 filter">
           <Select
             className=".custom-select"
             defaultValue={{ value: "all", label: "Type" }}
@@ -441,7 +441,7 @@ export default function SearchFlux() {
             Filtrage sans recherche
           </label>
         </div>
-        <div className="col-6 searchBox">
+        <div className="col-4 searchBox">
           <input
             className="searchInput"
             type="text"
@@ -466,60 +466,68 @@ export default function SearchFlux() {
           </button>
         </div>
       </div>
-
-      <table className="table">
-        <thead className="table-dark">
-          <tr>
-            <th scope="col" className="bordering-left">
-              Flux
-            </th>
-            <th scope="col">Annee</th>
-            <th scope="col">Timestre</th>
-            <th scope="col">SH8</th>
-            <th scope="col">Libelle</th>
-            <th scope="col">Valeur</th>
-            <th scope="col">Poids net</th>
-            <th scope="col">Quantité</th>
-            <th scope="col">Prix unitaire</th>
-            <th scope="col">Prix unitaire annuel moyen</th>
-            <th scope="col" className="bordering-right">
-              SH2
-            </th>
-          </tr>
-        </thead>
-        <br />
-        <tbody className="flux-table">
-          {fluxs.slice(startIndex, endIndex).map((flux) => (
-            <tr key={flux.id_flux}>
-              <td>{flux.type}</td>
-              <td>{flux.annee}</td>
-              <td>{flux.trimestre}</td>
-              <td>{flux.sh8}</td>
-              <td>{flux.libelle}</td>
-              <td>{flux.valeur}</td>
-              <td>{flux.poids_net}</td>
-              <td>{flux.quantite}</td>
-              <td>{flux.prix_unitaire}</td>
-              <td>{flux.prix_unitaire_moyenne_annuelle}</td>
-              <td>
-                {flux.sh2}
-                <FontAwesomeIcon
-                  className="iconz-left"
-                  icon={faEdit}
-                  onClick={() => handleEditClick(flux)}
-                />
-                <FontAwesomeIcon
-                  className="iconz-right"
-                  icon={faTrash}
-                  onClick={(event) => handleDelete(event, flux.id_flux)}
-                />
-              </td>
+      <div className="container tableContainer">
+        <table className="table">
+          <thead className="table-dark">
+            <tr>
+              <th scope="col" className="bordering-left">
+                Flux
+              </th>
+              <th scope="col">Annee</th>
+              <th scope="col">Timestre</th>
+              <th scope="col">SH8</th>
+              <th scope="col">Libelle</th>
+              <th scope="col">Valeur</th>
+              <th scope="col">Poids net</th>
+              <th scope="col">Quantité</th>
+              <th scope="col">Prix unitaire</th>
+              <th scope="col">Prix unitaire annuel moyen</th>
+              <th
+                scope="col"
+                className="bordering-right"
+                style={{ minWidth: "95px" }}
+              >
+                SH2
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="pagination">
-        <ReactPaginate
+          </thead>
+          <br />
+          <tbody className="flux-table">
+            {fluxs.slice(startIndex, endIndex).map((flux) => (
+              <tr key={flux.id_flux}>
+                <td>{flux.type}</td>
+                <td>{flux.annee}</td>
+                <td>{flux.trimestre}</td>
+                <td>{flux.sh8}</td>
+                <td>{flux.libelle}</td>
+                <td>{flux.valeur}</td>
+                <td>{flux.poids_net}</td>
+                <td>{flux.quantite}</td>
+                <td>{flux.prix_unitaire}</td>
+                <td>{flux.prix_unitaire_moyenne_annuelle}</td>
+                <td>
+                  {flux.sh2}
+                  <FontAwesomeIcon
+                    className="iconz-left"
+                    icon={faEdit}
+                    onClick={() => handleEditClick(flux)}
+                  />
+                  <FontAwesomeIcon
+                    className="iconz-right"
+                    icon={faTrash}
+                    onClick={(event) => handleDelete(event, flux.id_flux)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="row pagination">
+        <Col xs={6} md={6} style={{ display: "flex" }}>
+          <div style={{marginLeft: '95%'}}>
+          <ReactPaginate
+          
           previousLabel={"<"}
           nextLabel={">"}
           breakLabel={"..."}
@@ -537,7 +545,12 @@ export default function SearchFlux() {
           breakClassName={"page-item"}
           breakLinkClassName={"page-link"}
           activeClassName={"active"}
-        />
+        />{" "}
+          </div>
+        </Col>
+        <Col xs={6} md={6} style={{ display: "flex" }} className="colExportation">
+          <Button className="buttonMain" style={{backgroundColor: '#003529', border: '#003529', marginLeft: '66%'}}>Exporter</Button>
+        </Col>
       </div>
     </div>
   );

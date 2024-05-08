@@ -55,16 +55,16 @@ tr td {
 }
 .flux-table .iconz-right {
   color: #003529;
-  margin-left: 15px;
+  margin-left: 5px;
 }
 
 .product-table .iconz-left {
   color: #003529;
-  margin-left: 85%;
+  margin-left: 05%;
 }
 .product-table .iconz-right {
   color: #003529;
-  margin-left: 10px;
+  margin-left: 1%;
 }
 .add-section {
   min-height: 100%;
@@ -206,17 +206,32 @@ tr td {
 .searchContainer {
   padding: 10px 10px 10px 10px;
   display: flex;
+  height: 90px;
 }
 
 .searchContainer .filter {
-  padding: 19px 10px 10px 10px;
+  padding: 19px 10px 10px 150px;
   display: flex;
 }
 .searchContainer .filter .custom-select {
   margin-right: 10px;
 }
 .searchContainer .searchBox {
+  margin-left: 3%;
   display: flex;
+  max-height: 60px;
+  background-color: #003529;
+  color: white;
+  max-width: 20%;
+}
+
+.searchContainer .searchBox .searchInput{
+  color: white;
+}
+
+.tableContainer {
+  right: -100px;
+  padding: 10px 10px 10px 10px;
 }
 
 .labeling {
@@ -225,12 +240,9 @@ tr td {
   font-size: 1rem;
   user-select: none;
 }
+
 .pagination {
   display: flex;
-  justify-content: center;
-  position: absolute;
-  top: 400px;
-  width: 80%;
 }
 .pagination .page-link {
   color: #003529; /* Couleur du texte des pages */
@@ -261,6 +273,8 @@ tr td {
   border: none; /* Supprimer la bordure autour du lien */
 }
 
+
+
 /* DASHBOARD */
 .dash-section {
   padding: 10px 40px 10px 40px;
@@ -290,7 +304,7 @@ tr td {
   background-color: white;
 }
 
-.dash-section .midle{
+.dash-section .midle {
   height: 7%;
   padding: 5px 40% 10px 40%;
 }

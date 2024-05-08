@@ -207,7 +207,7 @@ export default function SearchProduct() {
             sh8_product: toEditSh8,
             libelle_product: toEditLibelle,
             AnneeApparition: toEditAnnee,
-            TrimestreApparition: toEditTrim
+            TrimestreApparition: toEditTrim,
           }),
         }
       );
@@ -291,7 +291,7 @@ export default function SearchProduct() {
           marginBottom: "20px",
         }}
       >
-        <div className="col-6 filter">
+        <div className="col-8 filter">
           <Select
             className=".custom-select"
             defaultValue={{ value: "All", label: "Annee" }}
@@ -326,7 +326,7 @@ export default function SearchProduct() {
             Filtrage sans recherche
           </label>
         </div>
-        <div className="col-6 searchBox">
+        <div className="col-4 searchBox">
           <input
             className="searchInput"
             type="text"
@@ -345,66 +345,88 @@ export default function SearchProduct() {
           </button>
         </div>
       </div>
-
-      <table className="table">
-        <thead className="table-dark">
-          <tr>
-            <th scope="col" className="bordering-left">
-              SH8
-            </th>
-            <th scope="col">SH2</th>
-            <th scope="col">Libelle</th>
-            <th scope="col">Anne d'apparition</th>
-            <th scope="col" className="bordering-right">
-              Trimestre d'apparition
-            </th>
-          </tr>
-        </thead>
-        <br />
-        <tbody className="product-table">
-          {products.slice(startIndex, endIndex).map((product) => (
-            <tr key={product.id_product}>
-              <td>{product.sh8_product}</td>
-              <td>{product.sh2_product}</td>
-              <td>{product.libelle_product}</td>
-              <td>{product.AnneeApparition}</td>
-              <td>
-                {product.TrimestreApparition}{" "}
-                <FontAwesomeIcon
-                  className="iconz-left"
-                  icon={faEdit}
-                  onClick={() => handleEditClick(product)}
-                />{" "}
-                <FontAwesomeIcon
-                  className="iconz-right"
-                  icon={faTrash}
-                  onClick={(event) => handleDelete(event, product.id_product)}
-                />{" "}
-              </td>
+      <div className="container tableContainer">
+        <table className="table">
+          <thead className="table-dark">
+            <tr>
+              <th scope="col" className="bordering-left">
+                SH8
+              </th>
+              <th scope="col">SH2</th>
+              <th scope="col">Libelle</th>
+              <th scope="col">Anne d'apparition</th>
+              <th scope="col" className="bordering-right">
+                Trimestre d'apparition
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="pagination">
-        <ReactPaginate
-          previousLabel={"<"}
-          nextLabel={">"}
-          breakLabel={"..."}
-          pageCount={Math.ceil(products.length / itemsPerPage)}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-          containerClassName={"pagination"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item"}
-          previousLinkClassName={"page-link"}
-          nextClassName={"page-item"}
-          nextLinkClassName={"page-link"}
-          breakClassName={"page-item"}
-          breakLinkClassName={"page-link"}
-          activeClassName={"active"}
-        />
+          </thead>
+          <br />
+          <tbody className="product-table">
+            {products.slice(startIndex, endIndex).map((product) => (
+              <tr key={product.id_product}>
+                <td>{product.sh8_product}</td>
+                <td>{product.sh2_product}</td>
+                <td>{product.libelle_product}</td>
+                <td>{product.AnneeApparition}</td>
+                <td>
+                  {product.TrimestreApparition}{" "}
+                  <FontAwesomeIcon
+                    className="iconz-left"
+                    icon={faEdit}
+                    onClick={() => handleEditClick(product)}
+                  />{" "}
+                  <FontAwesomeIcon
+                    className="iconz-right"
+                    icon={faTrash}
+                    onClick={(event) => handleDelete(event, product.id_product)}
+                  />{" "}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="row pagination">
+        <Col xs={6} md={6} style={{ display: "flex" }}>
+          <div style={{ marginLeft: "95%" }}>
+            <ReactPaginate
+              previousLabel={"<"}
+              nextLabel={">"}
+              breakLabel={"..."}
+              pageCount={Math.ceil(products.length / itemsPerPage)}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />{" "}
+          </div>
+        </Col>
+        <Col
+          xs={6}
+          md={6}
+          style={{ display: "flex" }}
+          className="colExportation"
+        >
+          <Button
+            className="buttonMain"
+            style={{
+              backgroundColor: "#003529",
+              border: "#003529",
+              marginLeft: "66%",
+            }}
+          >
+            Exporter
+          </Button>
+        </Col>
       </div>
     </div>
   );

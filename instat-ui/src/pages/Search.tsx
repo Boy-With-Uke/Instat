@@ -19,15 +19,16 @@ export default function Search() {
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex"}}>
           <Sidebar />
           <div
             className="col-11 main"
             style={{
-              margin: "0px;",
+              margin: "0px",
             }}
+            
           >
-            <div className="radio-inputs" style={{marginBottom: "20px"}}>
+            <div className="radio-inputs" style={{marginBottom: "20px", marginTop: '-20px'}}>
               <label className="radio">
                 <input
                   type="radio"
