@@ -1,6 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import "../assets/main.css";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
@@ -11,6 +11,8 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  LineElement,
+  PointElement,
 } from "chart.js";
 import { title } from "process";
 ChartJS.register(
@@ -20,12 +22,22 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  LineElement,
+  PointElement
 );
 
 export default function Dashboard() {
   const [dataRight, setDataRight] = useState([]);
   const [dataLeft, setDataLeft] = useState([]);
+  const [bigData, setBigData] = useState([]);
+  const [dataExp, setDataExp] = useState([]);
+  const [dataImp, setDataImp] = useState([]);
+  const uniqueYears = Array.from(
+    new Set(bigData.map((item: any) => item.annee)),
+    (item) => Number(item)
+  ).sort((a, b) => a - b);
+  console.log(uniqueYears);
 
   const [trimestre, setTrimestre] = useState(
     Math.ceil((new Date().getMonth() + 1) / 3)
@@ -39,12 +51,13 @@ export default function Dashboard() {
         const response = await fetch("http://localhost:3000/api/instat/flux/");
 
         const dataJson = await response.json();
+
+        setBigData(dataJson);
         const filteredDataAllyear = dataJson.filter(
           (flux: any) => flux.type === type
         );
 
         setDataLeft(filteredDataAllyear);
-        //console.log(filteredDataAllyear);
 
         const filteredFluxsThisyear = dataJson.filter(
           (flux: any) =>
@@ -53,7 +66,14 @@ export default function Dashboard() {
             flux.trimestre === trimestre
         );
         setDataRight(filteredFluxsThisyear);
-        console.log(filteredFluxsThisyear);
+
+        const filteredtypeE = dataJson.filter((flux: any) => flux.type === "E");
+
+        setDataExp(filteredtypeE);
+
+        const filteredtypeI = dataJson.filter((flux: any) => flux.type === "I");
+
+        setDataImp(filteredtypeI);
       } catch (error) {
         console.log(error);
       }
@@ -106,6 +126,66 @@ export default function Dashboard() {
   const valeursLeft = sortedTop5Product.map(([_, valeur]) => valeur);
 
   const libellesLeft = LonglibellesLeft.map((libelle) => libelle.split(" "));
+
+  //BOTTOM
+
+  const dataE = dataExp.reduce((acc: any, item: any) => {
+    if (!acc[item.annee]) {
+      acc[item.annee] = 0;
+    }
+    acc[item.annee] += item.valeur;
+    return acc;
+  }, {});
+
+  const dataI = dataImp.reduce((acc: any, item: any) => {
+    if (!acc[item.annee]) {
+      acc[item.annee] = 0;
+    }
+    acc[item.annee] += item.valeur;
+    return acc;
+  }, {});
+  const sortedDataE = Object.entries(dataE).sort(
+    (a: any, b: any) => b[1] - a[1]
+  );
+
+  const sortedDataI = Object.entries(dataI).sort(
+    (a: any, b: any) => b[1] - a[1]
+  );
+
+  const valeurE = sortedDataE.map(([_, valeur]) => valeur);
+  const valeurI = sortedDataI.map(([_, valeur]) => valeur);
+
+  const data = {
+    labels: uniqueYears,
+    datasets: [
+      {
+        label: "Exportation",
+        data: valeurE,
+        borderColor: "#003529",
+        backgroundColor: "#006f34",
+      },
+      {
+        label: "Importations",
+        data: valeurI,
+        borderColor: "#006329",
+        backgroundColor: "#00e169",
+      },
+    ],
+  };
+
+  const options = {
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Graphique montrant le changements aux fils des ans",
+      },
+    },
+  };
 
   const barDataTop5ProductAllYear = {
     labels: libellesLeft,
@@ -186,16 +266,12 @@ export default function Dashboard() {
               margin: "0px;",
             }}
           >
-            <div className="dash-section" >
+            <div className="dash-section">
               <div className="row top">
-                <div
-                  className="col-6 left"
-                >
+                <div className="col-6 left">
                   <Bar data={barDataTop5ProductAllYear} options={barOptions1} />
                 </div>
-                <div
-                  className="col-6 right"
-                >
+                <div className="col-6 right">
                   <Doughnut
                     data={barDataTop3ProductinTheactualYear}
                     options={barOptions2}
@@ -225,7 +301,9 @@ export default function Dashboard() {
                   </label>
                 </div>
               </div>
-              <div className="row bottom">bottom</div>
+              <div className="row bottom">
+                <Line options={options} data={data} />
+              </div>
             </div>
           </div>
         </div>

@@ -272,7 +272,8 @@ tr td {
   min-height: 45%;
 }
 .dash-section .bottom {
-  min-height: 45%;
+  background-color: white;
+  height: 45%;
   border-radius: 10px;
 }
 
