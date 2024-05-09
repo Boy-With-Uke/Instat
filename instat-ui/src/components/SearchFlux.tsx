@@ -10,7 +10,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-
+import exportFromJSON from "export-from-json";
 import Form from "react-bootstrap/Form";
 
 export default function SearchFlux() {
@@ -280,6 +280,27 @@ export default function SearchFlux() {
   const handlePageChange = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
+  const exportToExcel = () => {
+    const type = "flux";
+    const data = fluxs;
+    const date = new Date(); // Obtenez la date et l'heure actuelles
+    const day = date.getDate(); // Jour du mois (1-31)
+    const month = date.getMonth() + 1; // Mois (0-11, donc +1 pour l'index humain)
+    const year = date.getFullYear(); // Année
+    const hours = date.getHours(); // Heures (0-23)
+    const minutes = date.getMinutes(); // Minutes (0-59)
+    const seconds = date.getSeconds(); // Secondes (0-59)
+
+    // Formater la date et l'heure dans le format souhaité
+    const fileName = `${type}${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
+
+    const exportType = exportFromJSON.types.xls;
+    try {
+      exportFromJSON({ data, fileName, exportType });
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
+  };
 
   return (
     <div>
@@ -525,31 +546,45 @@ export default function SearchFlux() {
       </div>
       <div className="row pagination">
         <Col xs={6} md={6} style={{ display: "flex" }}>
-          <div style={{marginLeft: '95%'}}>
-          <ReactPaginate
-          
-          previousLabel={"<"}
-          nextLabel={">"}
-          breakLabel={"..."}
-          pageCount={Math.ceil(fluxs.length / itemsPerPage)}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-          containerClassName={"pagination"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item"}
-          previousLinkClassName={"page-link"}
-          nextClassName={"page-item"}
-          nextLinkClassName={"page-link"}
-          breakClassName={"page-item"}
-          breakLinkClassName={"page-link"}
-          activeClassName={"active"}
-        />{" "}
+          <div style={{ marginLeft: "95%" }}>
+            <ReactPaginate
+              previousLabel={"<"}
+              nextLabel={">"}
+              breakLabel={"..."}
+              pageCount={Math.ceil(fluxs.length / itemsPerPage)}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />{" "}
           </div>
         </Col>
-        <Col xs={6} md={6} style={{ display: "flex" }} className="colExportation">
-          <Button className="buttonMain" style={{backgroundColor: '#003529', border: '#003529', marginLeft: '66%'}}>Exporter</Button>
+        <Col
+          xs={6}
+          md={6}
+          style={{ display: "flex" }}
+          className="colExportation"
+        >
+          <Button
+            className="buttonMain"
+            style={{
+              backgroundColor: "#003529",
+              border: "#003529",
+              marginLeft: "66%",
+            }}
+            onClick={exportToExcel}
+          >
+            Exporter
+          </Button>
         </Col>
       </div>
     </div>

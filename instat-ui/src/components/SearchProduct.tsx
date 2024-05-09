@@ -224,6 +224,7 @@ export default function SearchProduct() {
     setCurrentPage(selectedPage.selected);
   };
   const exportToExcel = () => {
+    const type = "product";
     const data = products;
     const date = new Date(); // Obtenez la date et l'heure actuelles
     const day = date.getDate(); // Jour du mois (1-31)
@@ -234,7 +235,7 @@ export default function SearchProduct() {
     const seconds = date.getSeconds(); // Secondes (0-59)
 
     // Formater la date et l'heure dans le format souhaité
-    const fileName = `${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
+    const fileName = `${type}${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
 
     const exportType = exportFromJSON.types.xls;
     try {
