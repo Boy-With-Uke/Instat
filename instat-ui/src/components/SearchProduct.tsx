@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import "../assets/select.css";
-
+import exportFromJSON from "export-from-json";
 import ReactPaginate from "react-paginate";
 import Checkbox from "@mui/material/Checkbox";
 import { ChangeEvent } from "react";
@@ -223,7 +223,26 @@ export default function SearchProduct() {
   const handlePageChange = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
+  const exportToExcel = () => {
+    const data = products;
+    const date = new Date(); // Obtenez la date et l'heure actuelles
+    const day = date.getDate(); // Jour du mois (1-31)
+    const month = date.getMonth() + 1; // Mois (0-11, donc +1 pour l'index humain)
+    const year = date.getFullYear(); // Année
+    const hours = date.getHours(); // Heures (0-23)
+    const minutes = date.getMinutes(); // Minutes (0-59)
+    const seconds = date.getSeconds(); // Secondes (0-59)
 
+    // Formater la date et l'heure dans le format souhaité
+    const fileName = `${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
+
+    const exportType = exportFromJSON.types.xls;
+    try {
+      exportFromJSON({ data, fileName, exportType });
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
+  };
   return (
     <div className="product-page">
       <Modal show={isShow} onHide={onHide} className="modal" size="lg">
@@ -423,6 +442,7 @@ export default function SearchProduct() {
               border: "#003529",
               marginLeft: "66%",
             }}
+            onClick={exportToExcel}
           >
             Exporter
           </Button>
