@@ -61,12 +61,13 @@ export default function SearchFlux() {
   const itemsPerPage = 10;
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
+  const [ask, setAsk] = useState(false);
   //Modal
   const [isShow, setIsShow] = useState(false);
 
   //EDIT
   const [selectedFlux, setSelectedFlux] = useState<Flux | null>(null);
+  const [listFlux, setListFlux] = useState<Flux[]>([]);
   const [toEditType, setToEditType] = useState("");
   const [toEditAnnee, setToEditAnnee] = useState(0);
   const [toEditTrim, setToEditTrim] = useState(0);
@@ -164,6 +165,7 @@ export default function SearchFlux() {
   };
   function onHide() {
     setIsShow(false);
+    setAsk(false)
   }
 
   const handleEditTypeChange = (selectedOption: any) => {
@@ -280,9 +282,9 @@ export default function SearchFlux() {
   const handlePageChange = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
-  const exportToExcel = () => {
+  const exportToExcel = (donnee: any) => {
     const type = "flux";
-    const data = fluxs;
+    const data = donnee;
     const date = new Date(); // Obtenez la date et l'heure actuelles
     const day = date.getDate(); // Jour du mois (1-31)
     const month = date.getMonth() + 1; // Mois (0-11, donc +1 pour l'index humain)
@@ -299,6 +301,29 @@ export default function SearchFlux() {
       exportFromJSON({ data, fileName, exportType });
     } catch (error) {
       console.log(`Error: ${error}`);
+    }
+  };
+
+  const handleCheckboxChange = (id: number, checked: boolean) => {
+    const fluxToAdd = fluxs.find((flux) => flux.id_flux === id);
+
+    if (checked && fluxToAdd) {
+      setListFlux((prevListFlux) => [...prevListFlux, fluxToAdd]);
+    } else {
+      setListFlux((prevListFlux) =>
+        prevListFlux.filter((flux) => flux.id_flux !== id)
+      );
+    }
+  };
+  useEffect(() => {
+    console.log(listFlux);
+  }, [listFlux]);
+
+  const askAll = () => {
+    if (listFlux.length >= 1) {
+      exportToExcel(listFlux);
+    } else {
+      setAsk(true);
     }
   };
 
@@ -411,6 +436,37 @@ export default function SearchFlux() {
             Enregistrer
           </Button>
         </Modal.Footer>
+      </Modal>
+      <Modal show={ask} onHide={onHide} className="modal" size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Aucun flux selectionnees voulez vous tout enregistrer?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="grid-example">
+          <Container>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Button
+                  variant="danger"
+                  style={{ width: "300px" }}
+                  onClick={onHide}
+                >
+                  Annuler
+                </Button>
+              </Col>
+              <Col xs={6} md={6}>
+                <Button
+                  variant="success"
+                  style={{ width: "300px" }}
+                  onClick={() => exportToExcel(fluxs)}
+                >
+                  Enregistrer
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
       </Modal>
       <div
         className="row searchContainer"
@@ -539,6 +595,18 @@ export default function SearchFlux() {
                     onClick={(event) => handleDelete(event, flux.id_flux)}
                   />
                 </td>
+                <Checkbox
+                  id="addToList"
+                  onChange={(event) =>
+                    handleCheckboxChange(flux.id_flux, event.target.checked)
+                  }
+                  sx={{
+                    color: "#003529",
+                    "&.Mui-checked": {
+                      color: "#003529",
+                    },
+                  }}
+                />
               </tr>
             ))}
           </tbody>
@@ -581,7 +649,7 @@ export default function SearchFlux() {
               border: "#003529",
               marginLeft: "66%",
             }}
-            onClick={exportToExcel}
+            onClick={askAll}
           >
             Exporter
           </Button>
