@@ -53,6 +53,7 @@ export default function SearchProduct() {
   //EDIT
   const [isShow, setIsShow] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [listProduct, setListProduct] = useState<Product[]>([]);
   const [toEditSh8, setToEditSh8] = useState("");
   const [toEditLibelle, setToEditLibelle] = useState("");
   const [toEditAnnee, setToEditAnnee] = useState(0);
@@ -244,6 +245,21 @@ export default function SearchProduct() {
       console.log(`Error: ${error}`);
     }
   };
+  const handleCheckboxChange = (id: number, checked: boolean) => {
+    const productToAdd = products.find((product) => product.id_product === id);
+
+    if (checked && productToAdd) {
+      setListProduct((prevListProduct) => [...prevListProduct, productToAdd]);
+    } else {
+      setListProduct((prevListProduct) =>
+        prevListProduct.filter((product) => product.id_product !== id)
+      );
+    }
+  };
+  useEffect(() => {
+    console.log(listProduct);
+  }, [listProduct]);
+
   return (
     <div className="product-page">
       <Modal show={isShow} onHide={onHide} className="modal" size="lg">
@@ -401,6 +417,21 @@ export default function SearchProduct() {
                     onClick={(event) => handleDelete(event, product.id_product)}
                   />{" "}
                 </td>
+                <Checkbox
+                  id="addToList"
+                  onChange={(event) =>
+                    handleCheckboxChange(
+                      product.id_product,
+                      event.target.checked
+                    )
+                  }
+                  sx={{
+                    color: "#003529",
+                    "&.Mui-checked": {
+                      color: "#003529",
+                    },
+                  }}
+                />
               </tr>
             ))}
           </tbody>
