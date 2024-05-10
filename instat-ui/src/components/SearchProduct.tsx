@@ -58,6 +58,7 @@ export default function SearchProduct() {
   const [toEditLibelle, setToEditLibelle] = useState("");
   const [toEditAnnee, setToEditAnnee] = useState(0);
   const [toEditTrim, setToEditTrim] = useState(0);
+  const [ask, setAsk] = useState(false);
 
   const handleEditClick = (product: Product) => {
     setSelectedProduct(product);
@@ -69,6 +70,7 @@ export default function SearchProduct() {
   };
   function onHide() {
     setIsShow(false);
+    setAsk(false);
   }
 
   const customStyles = {
@@ -224,9 +226,9 @@ export default function SearchProduct() {
   const handlePageChange = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
-  const exportToExcel = () => {
+  const exportToExcel = (donnee: any) => {
     const type = "product";
-    const data = products;
+    const data = donnee;
     const date = new Date(); // Obtenez la date et l'heure actuelles
     const day = date.getDate(); // Jour du mois (1-31)
     const month = date.getMonth() + 1; // Mois (0-11, donc +1 pour l'index humain)
@@ -260,6 +262,14 @@ export default function SearchProduct() {
     console.log(listProduct);
   }, [listProduct]);
 
+  const askAll = () => {
+    if (listProduct.length >= 1) {
+      console.log("tokony tsy misy");
+      exportToExcel(listProduct);
+    } else {
+      setAsk(true);
+    }
+  };
   return (
     <div className="product-page">
       <Modal show={isShow} onHide={onHide} className="modal" size="lg">
@@ -320,6 +330,38 @@ export default function SearchProduct() {
             Enregistrer
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal show={ask} onHide={onHide} className="modal" size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Aucun produits selectionnees voulez vous tout enregistrer?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="grid-example">
+          <Container>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Button
+                  variant="danger"
+                  style={{ width: "300px" }}
+                  onClick={onHide}
+                >
+                  Annuler
+                </Button>
+              </Col>
+              <Col xs={6} md={6}>
+                <Button
+                  variant="success"
+                  style={{ width: "300px" }}
+                  onClick={() => exportToExcel(products)}
+                >
+                  Enregistrer
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
       </Modal>
       <div
         className="row searchContainer"
@@ -474,7 +516,7 @@ export default function SearchProduct() {
               border: "#003529",
               marginLeft: "66%",
             }}
-            onClick={exportToExcel}
+            onClick={askAll}
           >
             Exporter
           </Button>
