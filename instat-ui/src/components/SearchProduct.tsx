@@ -227,7 +227,7 @@ export default function SearchProduct() {
     setCurrentPage(selectedPage.selected);
   };
   const exportToExcel = (donnee: any) => {
-    const type = "product";
+    const type = "product-";
     const data = donnee;
     const date = new Date(); // Obtenez la date et l'heure actuelles
     const day = date.getDate(); // Jour du mois (1-31)

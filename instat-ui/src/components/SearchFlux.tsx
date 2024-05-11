@@ -283,7 +283,7 @@ export default function SearchFlux() {
     setCurrentPage(selectedPage.selected);
   };
   const exportToExcel = (donnee: any) => {
-    const type = "flux";
+    const type = "flux-";
     const data = donnee;
     const date = new Date(); // Obtenez la date et l'heure actuelles
     const day = date.getDate(); // Jour du mois (1-31)
