@@ -38,7 +38,6 @@ export default function AddProduct() {
         }
       );
       console.log(response);
-      alert("Nouveau produit ajouté avec succès");
     } catch (e) {
       alert(e);
       console.log(e);
@@ -98,7 +97,7 @@ export default function AddProduct() {
             Swal.fire({
               icon: "success",
               title: "Succès",
-              text: "Importation du fichier réussie",
+              text: "Insertion des donnes du fichier reussi",
             });
             setIsShowModalFile(false);
           }
@@ -142,6 +141,15 @@ export default function AddProduct() {
 
     // Appeler handleAddProduct avec les données du produit
     handleAddProduct(productData);
+    Swal.fire({
+      icon: "success",
+      title: "Succès",
+      text: "Succes de l'nsertion du nouveau produit",
+    });
+    setSh8(0);
+    setAnneeApp(new Date().getFullYear());
+    setTrimestreApp(Math.ceil((new Date().getMonth() + 1) / 3));
+    setLibelle("");
   };
   return (
     <>
@@ -207,6 +215,7 @@ export default function AddProduct() {
                 type="number"
                 placeholder="sh8"
                 required
+                value={sh8 === 0 ? "" : sh8}
                 onChange={(event) => setSh8(Number(event.target.value))}
               />
             </div>
