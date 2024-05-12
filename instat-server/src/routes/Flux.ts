@@ -65,7 +65,19 @@ router.post("/new", async (req, res) => {
       prix_unitaire,
       trimestre,
     } = req.body;
-    if (!sh8 || !valeur || !poids_net || !quantite || !prix_unitaire) {
+    // Vérifier si les champs sont vides ou null et les remplacer par 0 si nécessaire
+    const sanitizedValeur = valeur === null ? 0 : valeur;
+    const sanitizedPoidsNet = poids_net === null ? 0 : poids_net;
+    const sanitizedQuantite = quantite === null ? 0 : quantite;
+    const sanitizedPrixUnitaire = prix_unitaire === null ? 0 : prix_unitaire;
+
+    if (
+      !sh8 ||
+      !sanitizedValeur ||
+      !sanitizedPoidsNet ||
+      !sanitizedQuantite ||
+      !sanitizedPrixUnitaire
+    ) {
       return res.status(400).json({ error: "Missing parameter" });
     }
 
@@ -89,10 +101,10 @@ router.post("/new", async (req, res) => {
         trimestre: trimestre,
         sh2: associatedProduct?.sh2_product as number,
         libelle: associatedProduct?.libelle_product as string,
-        valeur: valeur,
-        poids_net: poids_net,
-        quantite: quantite,
-        prix_unitaire: prix_unitaire,
+        valeur: sanitizedValeur,
+        poids_net: sanitizedPoidsNet,
+        quantite: sanitizedQuantite,
+        prix_unitaire: sanitizedPrixUnitaire,
       },
     });
     await updatePrixAnnuelle(sh8.toString(), annee, type);
@@ -100,6 +112,7 @@ router.post("/new", async (req, res) => {
     res.json({ messsage, flux });
   } catch (error) {
     console.log(`Error: ${error}`);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

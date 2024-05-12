@@ -50,8 +50,6 @@ export default function AddFlux() {
     setIsShowModalFile(false);
   }
 
-
-
   const handleConvert = () => {
     if (file) {
       try {
@@ -65,40 +63,81 @@ export default function AddFlux() {
             const json = XLSX.utils.sheet_to_json(worksheet);
 
             // Valider les données du fichier
-            const isValidData = json.every((flux: any) => {
-              return (
+            const invalidData: { row: number; columns: string[] }[] = [];
+            const isValidData = json.every((flux: any, index: number) => {
+              const missingProperties: string[] = [];
+              const isValid =
                 flux.sh8 &&
                 flux.type &&
                 flux.annee &&
                 flux.trimestre &&
                 flux.valeur &&
                 flux.poids_net &&
-                flux.quantite &&
-                flux.prix_unitaire
-              );
+                flux.prix_unitaire;
+
+              if (!isValid) {
+                const requiredProperties = [
+                  "sh8",
+                  "type",
+                  "annee",
+                  "trimestre",
+                  "valeur",
+                  "poids_net",
+                  "quantite",
+                  "prix_unitaire",
+                ];
+                requiredProperties.forEach((key) => {
+                  if (
+                    flux[key] === undefined ||
+                    flux[key] === null ||
+                    flux[key] === ""
+                  ) {
+                    missingProperties.push(key);
+                  }
+                });
+                invalidData.push({
+                  row: index + 2,
+                  columns: missingProperties,
+                });
+              }
+              return isValid;
             });
 
             if (!isValidData) {
+              const errorMessage =
+                "Les données suivantes du fichier ne sont pas valides : \n" +
+                invalidData
+                  .map(
+                    (data) =>
+                      `Ligne ${data.row}, Colonnes ${data.columns
+                        .map(
+                          (key, index) =>
+                            ` ${key.padEnd(10, " ")}${getColumnLetter(index)}`
+                        )
+                        .join("")}`
+                  )
+                  .join("\n");
+
               Swal.fire({
                 icon: "error",
                 title: "Erreur",
-                text: "Les données du fichier ne sont pas valides",
+                text: errorMessage,
               });
               return;
+            } else {
+              setJsonData(JSON.stringify(json, null, 2));
+
+              json.forEach((flux: any) => {
+                handleAddFlux(flux);
+              });
+
+              Swal.fire({
+                icon: "success",
+                title: "Succès",
+                text: "Insertion des donnes du fichier reussi",
+              });
+              setIsShowModalFile(false);
             }
-
-            setJsonData(JSON.stringify(json, null, 2));
-
-            json.forEach((flux: any) => {
-              handleAddFlux(flux);
-            });
-
-            Swal.fire({
-              icon: "success",
-              title: "Succès",
-              text: "Insertion des donnes du fichier reussi",
-            });
-            setIsShowModalFile(false);
           }
         };
         reader.readAsArrayBuffer(file);
@@ -118,6 +157,17 @@ export default function AddFlux() {
       });
     }
   };
+  function getColumnLetter(columnIndex: number): string {
+    let temp;
+    let letter = "";
+    while (columnIndex > 0) {
+      temp = (columnIndex - 1) % 26;
+      letter = String.fromCharCode(temp + 65) + letter;
+      columnIndex = (columnIndex - temp - 1) / 26;
+    }
+    console.log(columnIndex + "" + letter);
+    return letter;
+  }
 
   const handleAddFlux = async (fluxData: Flux) => {
     try {
@@ -130,7 +180,6 @@ export default function AddFlux() {
       });
       console.log(reponse);
     } catch (e) {
-      alert(e);
       console.log(e);
     }
   };

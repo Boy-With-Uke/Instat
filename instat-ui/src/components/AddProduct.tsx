@@ -39,7 +39,6 @@ export default function AddProduct() {
       );
       console.log(response);
     } catch (e) {
-      alert(e);
       console.log(e);
     }
   };
@@ -104,7 +103,6 @@ export default function AddProduct() {
             });
 
             if (!isValidData) {
-              console.log(invalidData);
               const errorMessage =
                 "Les données suivantes du fichier ne sont pas valides : \n" +
                 invalidData
@@ -116,7 +114,6 @@ export default function AddProduct() {
                             ` ${key.padEnd(10, " ")}${getColumnLetter(index)}`
                         )
                         .join("")}`
-                        
                   )
                   .join("\n");
 
@@ -126,21 +123,20 @@ export default function AddProduct() {
                 text: errorMessage,
               });
               return;
+            } else {
+              setJsonData(JSON.stringify(json, null, 2));
+
+              json.forEach((product: any) => {
+                handleAddProduct(product);
+              });
+
+              Swal.fire({
+                icon: "success",
+                title: "Succès",
+                text: "Insertion des données du fichier réussie",
+              });
+              setIsShowModalFile(false);
             }
-
-            setJsonData(JSON.stringify(json, null, 2));
-
-            // Ajouter les produits en utilisant handleAddProduct
-            json.forEach((product: any) => {
-              handleAddProduct(product);
-            });
-
-            Swal.fire({
-              icon: "success",
-              title: "Succès",
-              text: "Insertion des données du fichier réussie",
-            });
-            setIsShowModalFile(false);
           }
         };
         reader.readAsArrayBuffer(file);
