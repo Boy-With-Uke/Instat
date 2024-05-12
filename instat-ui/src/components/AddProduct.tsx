@@ -69,20 +69,61 @@ export default function AddProduct() {
             const json = XLSX.utils.sheet_to_json(worksheet);
 
             // Valider les données du fichier
-            const isValidData = json.every((product: any) => {
-              return (
+            const invalidData: { row: number; columns: string[] }[] = [];
+            const isValidData = json.every((product: any, index: number) => {
+              const missingProperties: string[] = [];
+              const isValid =
                 product.sh8_product &&
                 product.libelle_product &&
                 product.AnneeApparition &&
-                product.TrimestreApparition
-              );
+                product.TrimestreApparition;
+
+              if (!isValid) {
+                const requiredProperties = [
+                  "sh8_product",
+                  "libelle_product",
+                  "AnneeApparition",
+                  "TrimestreApparition",
+                ];
+                requiredProperties.forEach((key) => {
+                  if (
+                    product[key] === undefined ||
+                    product[key] === null ||
+                    product[key] === ""
+                  ) {
+                    missingProperties.push(key);
+                  }
+                });
+                invalidData.push({
+                  row: index + 2,
+                  columns: missingProperties,
+                });
+              }
+
+              return isValid;
             });
 
             if (!isValidData) {
+              console.log(invalidData);
+              const errorMessage =
+                "Les données suivantes du fichier ne sont pas valides : \n" +
+                invalidData
+                  .map(
+                    (data) =>
+                      `Ligne ${data.row}, Colonnes ${data.columns
+                        .map(
+                          (key, index) =>
+                            ` ${key.padEnd(10, " ")}${getColumnLetter(index)}`
+                        )
+                        .join("")}`
+                        
+                  )
+                  .join("\n");
+
               Swal.fire({
                 icon: "error",
                 title: "Erreur",
-                text: "Les données du fichier ne sont pas valides",
+                text: errorMessage,
               });
               return;
             }
@@ -97,7 +138,7 @@ export default function AddProduct() {
             Swal.fire({
               icon: "success",
               title: "Succès",
-              text: "Insertion des donnes du fichier reussi",
+              text: "Insertion des données du fichier réussie",
             });
             setIsShowModalFile(false);
           }
@@ -119,6 +160,19 @@ export default function AddProduct() {
       });
     }
   };
+
+  function getColumnLetter(columnIndex: number): string {
+    let temp;
+    let letter = "";
+    while (columnIndex > 0) {
+      temp = (columnIndex - 1) % 26;
+      letter = String.fromCharCode(temp + 65) + letter;
+      columnIndex = (columnIndex - temp - 1) / 26;
+    }
+    console.log(columnIndex + "" + letter);
+    return letter;
+  }
+
   const toJson = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Vérifier que toutes les données nécessaires sont remplies
@@ -155,7 +209,9 @@ export default function AddProduct() {
     <>
       <Modal show={isShowModalFile} onHide={onHide} className="modal" size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Sélectionner le fichier</Modal.Title>
+          <Modal.Title>
+            Sélectionner le fichier contenant la listede produits a inserer
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body className="grid-example">
           <Container>
