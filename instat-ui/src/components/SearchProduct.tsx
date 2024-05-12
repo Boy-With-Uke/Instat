@@ -12,7 +12,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-
+import LibelleDropdown from "./LibelleDropDown";
 import Form from "react-bootstrap/Form";
 
 export default function SearchProduct() {
@@ -431,9 +431,15 @@ export default function SearchProduct() {
                 SH8
               </th>
               <th scope="col">SH2</th>
-              <th scope="col">Libelle</th>
+              <th scope="col" style={{ maxHeight: "50px" }}>
+                Libelle
+              </th>
               <th scope="col">Anne d'apparition</th>
-              <th scope="col" className="bordering-right">
+              <th
+                scope="col"
+                className="bordering-right"
+                style={{ minWidth: "95px" }}
+              >
                 Trimestre d'apparition
               </th>
             </tr>
@@ -444,7 +450,13 @@ export default function SearchProduct() {
               <tr key={product.id_product}>
                 <td>{product.sh8_product}</td>
                 <td>{product.sh2_product}</td>
-                <td>{product.libelle_product}</td>
+                <td style={{ maxHeight: "50px", overflow: "hidden" }}>
+                  {product.libelle_product.length > 20 ? (
+                    <LibelleDropdown libelle={product.libelle_product} />
+                  ) : (
+                    product.libelle_product
+                  )}
+                </td>
                 <td>{product.AnneeApparition}</td>
                 <td>
                   {product.TrimestreApparition}{" "}

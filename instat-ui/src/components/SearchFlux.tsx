@@ -12,6 +12,7 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import exportFromJSON from "export-from-json";
 import Form from "react-bootstrap/Form";
+import LibelleDropdown from "./LibelleDropDown";
 
 export default function SearchFlux() {
   type Flux = {
@@ -165,7 +166,7 @@ export default function SearchFlux() {
   };
   function onHide() {
     setIsShow(false);
-    setAsk(false)
+    setAsk(false);
   }
 
   const handleEditTypeChange = (selectedOption: any) => {
@@ -553,7 +554,9 @@ export default function SearchFlux() {
               <th scope="col">Annee</th>
               <th scope="col">Timestre</th>
               <th scope="col">SH8</th>
-              <th scope="col">Libelle</th>
+              <th scope="col" style={{ maxHeight: "50px" }}>
+                Libelle
+              </th>
               <th scope="col">Valeur</th>
               <th scope="col">Poids net</th>
               <th scope="col">Quantité</th>
@@ -576,7 +579,13 @@ export default function SearchFlux() {
                 <td>{flux.annee}</td>
                 <td>{flux.trimestre}</td>
                 <td>{flux.sh8}</td>
-                <td>{flux.libelle}</td>
+                <td style={{ maxHeight: "50px", overflow: "hidden" }}>
+                  {flux.libelle.length > 20 ? (
+                    <LibelleDropdown libelle={flux.libelle} />
+                  ) : (
+                    flux.libelle
+                  )}
+                </td>
                 <td>{flux.valeur}</td>
                 <td>{flux.poids_net}</td>
                 <td>{flux.quantite}</td>
