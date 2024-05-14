@@ -6,7 +6,7 @@ const cors = require("cors");
 const localServerApp = express();
 const PORT = 8088;
 const startLocalServer = (done) => {
-  localServerApp.use(express.json({ limit: "100mb" }));
+  localServerApp.use(express.json({ limit: "1024mb" }));
   localServerApp.use(cors());
   localServerApp.use(express.static("./build/"));
   localServerApp.listen(PORT, async () => {
@@ -18,8 +18,8 @@ const startLocalServer = (done) => {
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1600,
+    height: 1000,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -29,8 +29,8 @@ function createWindow() {
   //   mainWindow.loadFile('index.html')
   mainWindow.loadURL("http://localhost:" + PORT);
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  // Open the DevTools. 
+  mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
