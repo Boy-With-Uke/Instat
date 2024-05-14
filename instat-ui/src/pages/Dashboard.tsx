@@ -112,10 +112,10 @@ export default function Dashboard() {
   // --------------------------LEFT--------------------------
 
   const top5AllYear = dataLeft.reduce((acc: any, item: any) => {
-    if (!acc[item.libelle]) {
-      acc[item.libelle] = 0;
+    if (!acc[item.sh8]) {
+      acc[item.sh8] = 0;
     }
-    acc[item.libelle] += item.valeur;
+    acc[item.sh8] += item.valeur;
     return acc;
   }, {});
 
@@ -194,10 +194,10 @@ export default function Dashboard() {
         data: valeursLeft,
         backgroundColor: [
           "#003529",
-          "#006329",
-          "#008329",
-          "#003529",
-          "#006329",
+          "#004929",
+          "#005c29",
+          "#007f29",
+          "#009d29",
         ],
       },
     ],

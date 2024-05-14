@@ -623,7 +623,7 @@ export default function SearchFlux() {
       </div>
       <div className="row pagination">
         <Col xs={6} md={6} style={{ display: "flex" }}>
-          <div style={{ marginLeft: "95%" }}>
+          <div style={{ marginLeft: "75%" }}>
             <ReactPaginate
               previousLabel={"<"}
               nextLabel={">"}

@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-import exportFromJSON from "export-from-json";
 import Form from "react-bootstrap/Form";
 
 interface LibelleDropdownProps {
