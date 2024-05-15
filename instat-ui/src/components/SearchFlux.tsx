@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faRotateRight, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 import Checkbox from "@mui/material/Checkbox";
@@ -272,7 +272,7 @@ export default function SearchFlux() {
           }),
         }
       );
-      fetchFlux()
+      fetchFlux();
       Swal.fire({
         icon: "success",
         title: "Succès",
@@ -584,17 +584,17 @@ export default function SearchFlux() {
         }}
       >
         <div className="col-8 filter">
-        <Button
+          <Button
             className="buttonMain"
+            variant="warning"
             style={{
-              backgroundColor: "#003529",
-              border: "#003529",
               maxHeight: "40px",
               marginRight: "10px",
             }}
             onClick={reloadPage}
           >
-            Actualiser
+            Actualiser {"         "}
+            <FontAwesomeIcon icon={faRotateRight} />
           </Button>
           <Select
             className=".custom-select"
@@ -639,7 +639,7 @@ export default function SearchFlux() {
             Filtrage sans recherche
           </label>
         </div>
-        
+
         <div className="col-4 searchBox">
           <input
             className="searchInput"

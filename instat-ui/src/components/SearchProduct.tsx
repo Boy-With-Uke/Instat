@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faRotateRight,
+  faSearch,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import "../assets/select.css";
 import exportFromJSON from "export-from-json";
@@ -490,17 +495,17 @@ export default function SearchProduct() {
         }}
       >
         <div className="col-8 filter">
-        <Button
+          <Button
             className="buttonMain"
+            variant="warning"
             style={{
-              backgroundColor: "#003529",
-              border: "#003529",
               maxHeight: "40px",
               marginRight: "10px",
             }}
             onClick={reloadPage}
           >
-            Reinitialiser
+            Actualiser {"         "}
+            <FontAwesomeIcon icon={faRotateRight} />
           </Button>
           <Select
             className=".custom-select"
