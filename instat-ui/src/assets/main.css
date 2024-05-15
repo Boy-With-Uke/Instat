@@ -210,7 +210,7 @@ tr td {
 }
 
 .searchContainer .filter {
-  padding: 19px 10px 10px 150px;
+  padding: 19px 10px 10px 0px;
   display: flex;
 }
 .searchContainer .filter .custom-select {

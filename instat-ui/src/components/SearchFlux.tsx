@@ -401,7 +401,9 @@ export default function SearchFlux() {
       console.error(error);
     }
   };
-
+  function reloadPage() {
+    window.location.reload();
+  }
   return (
     <div>
       <Modal show={isShow} onHide={onHide} className="modal" size="lg">
@@ -582,6 +584,18 @@ export default function SearchFlux() {
         }}
       >
         <div className="col-8 filter">
+        <Button
+            className="buttonMain"
+            style={{
+              backgroundColor: "#003529",
+              border: "#003529",
+              maxHeight: "40px",
+              marginRight: "10px",
+            }}
+            onClick={reloadPage}
+          >
+            Actualiser
+          </Button>
           <Select
             className=".custom-select"
             defaultValue={{ value: "all", label: "Type" }}
@@ -625,6 +639,7 @@ export default function SearchFlux() {
             Filtrage sans recherche
           </label>
         </div>
+        
         <div className="col-4 searchBox">
           <input
             className="searchInput"

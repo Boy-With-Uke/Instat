@@ -490,6 +490,18 @@ export default function SearchProduct() {
         }}
       >
         <div className="col-8 filter">
+        <Button
+            className="buttonMain"
+            style={{
+              backgroundColor: "#003529",
+              border: "#003529",
+              maxHeight: "40px",
+              marginRight: "10px",
+            }}
+            onClick={reloadPage}
+          >
+            Reinitialiser
+          </Button>
           <Select
             className=".custom-select"
             defaultValue={{ value: "All", label: "Annee" }}
