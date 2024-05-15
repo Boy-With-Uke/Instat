@@ -247,6 +247,16 @@ export default function SearchProduct() {
     const minutes = date.getMinutes(); // Minutes (0-59)
     const seconds = date.getSeconds(); // Secondes (0-59)
 
+    if (data.length <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "",
+        text: `Aucun produits a exporter`,
+      });
+      setAsk(false);
+      return;
+    }
+
     // Formater la date et l'heure dans le format souhaité
     const fileName = `${type}${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
 
@@ -286,6 +296,15 @@ export default function SearchProduct() {
   };
 
   const deleteAll = async (data: any) => {
+    if (data.length <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "",
+        text: `Aucun produits a supprimer`,
+      });
+      setAskDelete(false);
+      return;
+    }
     try {
       // Itérer sur chaque ID de produit dans data
       for (const productList of data) {
