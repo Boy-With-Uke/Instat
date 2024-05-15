@@ -96,7 +96,7 @@ router.post("/new", async (req, res) => {
         type: type,
         annee: annee,
         trimestre: trimestre,
-        sh2: associatedProduct?.sh2_product as number,
+        sh2: associatedProduct?.sh2_product as string,
         libelle: associatedProduct?.libelle_product as string,
         valeur: sanitizedValeur,
         poids_net: sanitizedPoidsNet,

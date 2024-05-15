@@ -31,11 +31,10 @@ router.post("/new", async (req, res) => {
     }
     const sh8_string = sh8_product.toString();
     const sh2_string = sh8_string.slice(0, 2);
-    const sh2_product = parseInt(sh2_string);
     const product = await prisma.product.create({
       data: {
         sh8_product: sh8_string,
-        sh2_product,
+        sh2_product: sh2_string,
         libelle_product,
         AnneeApparition,
         TrimestreApparition,
@@ -71,7 +70,7 @@ router.put("/update/:id", async (req, res) => {
       where: { id_product },
       data: {
         sh8_product,
-        sh2_product,
+        sh2_product: sh2_string,
         libelle_product,
         AnneeApparition,
         TrimestreApparition,

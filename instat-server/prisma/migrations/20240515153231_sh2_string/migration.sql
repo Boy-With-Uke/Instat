@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Flux` MODIFY `sh2` VARCHAR(191) NOT NULL;

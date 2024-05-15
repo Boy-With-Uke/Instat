@@ -5,9 +5,10 @@ export default function Essaie() {
   const [sh2, setSh2product] = useState("");
 
   const handleSh2 = () => {
-    const sh8_string = sh8_product.toString();
-    const sh2_string = sh8_string.slice(0, 3).toString();
-    setSh2product(sh2_string);
+    console.log(sh8_product);
+    const sh2_string = sh8_product.toString().slice(0, 2);
+    const paddedSh2 = sh2_string.padStart(2, "0");
+    setSh2product(paddedSh2);
   };
 
   return (
@@ -23,4 +24,3 @@ export default function Essaie() {
     </>
   );
 }
-

@@ -10,7 +10,7 @@ datasource db {
 model Product {
   id_product          Int    @id @default(autoincrement())
   sh8_product         String @unique
-  sh2_product         Int
+  sh2_product         String
   libelle_product     String
   AnneeApparition     Int
   TrimestreApparition Int
@@ -28,7 +28,7 @@ model Flux {
   annee      Int
   trimestre  Int
   libelle    String
-  sh2        Int
+  sh2        String
 
   valeur                         Int
   poids_net                      Int
