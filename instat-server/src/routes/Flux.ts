@@ -36,9 +36,6 @@ const updatePrixAnnuelle = async (sh8: string, annee: number, type: string) => {
         prix_unitaire_moyenne_annuelle: prixMoyenneUnitaire,
       },
     });
-    console.log(`Total prix unitaire: ${totalPrixUnitaire}`);
-    console.log(`Nombre d'occurences: ${nombreOccurences}`);
-    console.log(`Average price updated for set to ${prixMoyenneUnitaire}`);
   } catch (error) {
     console.error(`Error updating average price: ${error}`);
   }

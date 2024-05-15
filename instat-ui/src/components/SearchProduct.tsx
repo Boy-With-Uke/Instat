@@ -14,6 +14,7 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import LibelleDropdown from "./LibelleDropDown";
 import Form from "react-bootstrap/Form";
+import Swal from "sweetalert2";
 
 export default function SearchProduct() {
   type Product = {
@@ -59,6 +60,7 @@ export default function SearchProduct() {
   const [toEditAnnee, setToEditAnnee] = useState(0);
   const [toEditTrim, setToEditTrim] = useState(0);
   const [ask, setAsk] = useState(false);
+  const [askDelete, setAskDelete] = useState(false);
 
   const handleEditClick = (product: Product) => {
     setSelectedProduct(product);
@@ -71,6 +73,7 @@ export default function SearchProduct() {
   function onHide() {
     setIsShow(false);
     setAsk(false);
+    setAskDelete(false);
   }
 
   const customStyles = {
@@ -109,35 +112,32 @@ export default function SearchProduct() {
   function handleCheck(event: ChangeEvent<HTMLInputElement>) {
     setWithout(event.target.checked);
   }
+  const fetchFlux = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/instat/product/");
+      const products: Product[] = await response.json();
+
+      const years = Array.from(
+        new Set(products.map((product) => product.AnneeApparition))
+      );
+      const yearOptions = years.map((year) => ({
+        value: year.toString(),
+        label: year.toString(),
+      }));
+      const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
+      setProducts(products);
+
+      setYearOptions(defaultAnnee);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
-    const fetchFlux = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/api/instat/product/"
-        );
-        const products: Product[] = await response.json();
-
-        const years = Array.from(
-          new Set(products.map((product) => product.AnneeApparition))
-        );
-        const yearOptions = years.map((year) => ({
-          value: year.toString(),
-          label: year.toString(),
-        }));
-        const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
-        setProducts(products);
-
-        setYearOptions(defaultAnnee);
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchFlux();
   }, []);
 
   useEffect(() => {
     if (without) {
-      console.log(without);
       const fetchFlux = async () => {
         try {
           const reponse = await fetch(
@@ -173,9 +173,10 @@ export default function SearchProduct() {
       const products: Product[] = await response.json();
       setProducts(products);
     } catch (error) {
-      alert(`Error finding the product: ${error}`);
+      console.log(`Error finding the product: ${error}`);
     }
   };
+
   const handleDelete = async (event: React.MouseEvent, productId: number) => {
     event.stopPropagation();
 
@@ -191,6 +192,11 @@ export default function SearchProduct() {
         (product) => product.id_product !== productId
       );
       setProducts(updatedProduct);
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "La suppression de ce produit est un succes",
+      });
     } catch (error) {
       console.error(error);
     }
@@ -214,7 +220,11 @@ export default function SearchProduct() {
           }),
         }
       );
-      alert(`the product ${selectedProduct?.libelle_product} has been updated`);
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: `Le produit ${selectedProduct?.sh8_product} a ete mis a jour`,
+      });
       setIsShow(false);
     } catch (error) {
       console.log(`Error: ${error}`);
@@ -258,18 +268,76 @@ export default function SearchProduct() {
       );
     }
   };
-  useEffect(() => {
-    console.log(listProduct);
-  }, [listProduct]);
 
   const askAll = () => {
     if (listProduct.length >= 1) {
-      console.log("tokony tsy misy");
       exportToExcel(listProduct);
     } else {
       setAsk(true);
     }
   };
+
+  const askAllDelete = () => {
+    if (listProduct.length >= 1) {
+      deleteThem(listProduct);
+    } else {
+      setAskDelete(true);
+    }
+  };
+
+  const deleteAll = async (data: any) => {
+    try {
+      // Itérer sur chaque ID de produit dans data
+      for (const productList of data) {
+        await fetch(
+          `http://localhost:3000/api/instat/product/delete/${productList.id_product}`,
+          {
+            method: "DELETE",
+          }
+        );
+      }
+      setAskDelete(false);
+      // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "La suppression de tous les produits est un succes",
+      });
+
+      fetchFlux();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteThem = async (data: any) => {
+    try {
+      // Itérer sur chaque ID de produit dans data
+      for (const productList of data) {
+        await fetch(
+          `http://localhost:3000/api/instat/product/delete/${productList.id_product}`,
+          {
+            method: "DELETE",
+          }
+        );
+      }
+      // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
+      fetchFlux();
+      setListProduct([]);
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "La suppression de ces produits est un succes",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  function reloadPage() {
+    window.location.reload();
+  }
+
   return (
     <div className="product-page">
       <Modal show={isShow} onHide={onHide} className="modal" size="lg">
@@ -357,6 +425,39 @@ export default function SearchProduct() {
                   onClick={() => exportToExcel(products)}
                 >
                   Enregistrer
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+      </Modal>
+
+      {/* MODAL ASK DELETE */}
+      <Modal show={askDelete} onHide={onHide} className="modal" size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Aucun produits selectionnees voulez vous tout supprimer?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="grid-example">
+          <Container>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Button
+                  variant="warning"
+                  style={{ width: "300px" }}
+                  onClick={onHide}
+                >
+                  Annuler
+                </Button>
+              </Col>
+              <Col xs={6} md={6}>
+                <Button
+                  variant="danger"
+                  style={{ width: "300px" }}
+                  onClick={() => deleteAll(products)}
+                >
+                  Supprimer
                 </Button>
               </Col>
             </Row>
@@ -524,9 +625,19 @@ export default function SearchProduct() {
           <Button
             className="buttonMain"
             style={{
+              marginLeft: "36%",
+            }}
+            variant="danger"
+            onClick={askAllDelete}
+          >
+            Suprimmer
+          </Button>
+          <Button
+            className="buttonMain"
+            style={{
               backgroundColor: "#003529",
               border: "#003529",
-              marginLeft: "66%",
+              marginLeft: "5%",
             }}
             onClick={askAll}
           >

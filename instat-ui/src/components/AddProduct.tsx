@@ -37,7 +37,6 @@ export default function AddProduct() {
           body: JSON.stringify(productData),
         }
       );
-      console.log(response);
     } catch (e) {
       console.log(e);
     }
@@ -51,9 +50,9 @@ export default function AddProduct() {
     setIsShowModalFile(false);
   }
 
-  useEffect(() => {
-    console.log(jsonData);
-  }, [jsonData]);
+  // useEffect(() => {
+  //   console.log(jsonData);
+  // }, [jsonData]);
 
   const handleConvert = () => {
     if (file) {
@@ -165,7 +164,6 @@ export default function AddProduct() {
       letter = String.fromCharCode(temp + 65) + letter;
       columnIndex = (columnIndex - temp - 1) / 26;
     }
-    console.log(columnIndex + "" + letter);
     return letter;
   }
 

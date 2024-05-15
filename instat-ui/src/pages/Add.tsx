@@ -8,11 +8,9 @@ export default function Search() {
   const [isFlux, setIsFlux] = useState(true);
   function handleToogleFlux() {
     setIsFlux(true);
-    console.log(isFlux);
   }
   function handleToogleProduct() {
     setIsFlux(false);
-    console.log(isFlux);
   }
   return (
     <>
