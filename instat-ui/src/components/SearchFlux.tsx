@@ -13,6 +13,7 @@ import Row from "react-bootstrap/Row";
 import exportFromJSON from "export-from-json";
 import Form from "react-bootstrap/Form";
 import LibelleDropdown from "./LibelleDropDown";
+import Swal from "sweetalert2";
 
 export default function SearchFlux() {
   type Flux = {
@@ -76,6 +77,7 @@ export default function SearchFlux() {
   const [toEditPoids, setToEditPoids] = useState(0);
   const [toEditQuantite, setToEditQuantite] = useState(0);
   const [toEditPrix, setToEditPrix] = useState(0);
+  const [askDelete, setAskDelete] = useState(false);
 
   const customStyles = {
     control: (provided: any) => ({
@@ -167,33 +169,34 @@ export default function SearchFlux() {
   function onHide() {
     setIsShow(false);
     setAsk(false);
+    setAskDelete(false);
   }
 
   const handleEditTypeChange = (selectedOption: any) => {
     setToEditType(selectedOption.value);
   };
 
+  const fetchFlux = async () => {
+    try {
+      const reponse = await fetch("http://localhost:3000/api/instat/flux/");
+
+      const fluxs: Flux[] = await reponse.json();
+      const years = Array.from(new Set(fluxs.map((flux) => flux.annee)));
+
+      // Utiliser les années uniques
+
+      const yearOptions = years.map((year) => ({
+        value: year.toString(),
+        label: year.toString(),
+      }));
+      const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
+      setFluxs(fluxs);
+      setYearOptions(defaultAnnee);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
-    const fetchFlux = async () => {
-      try {
-        const reponse = await fetch("http://localhost:3000/api/instat/flux/");
-
-        const fluxs: Flux[] = await reponse.json();
-        const years = Array.from(new Set(fluxs.map((flux) => flux.annee)));
-
-        // Utiliser les années uniques
-
-        const yearOptions = years.map((year) => ({
-          value: year.toString(),
-          label: year.toString(),
-        }));
-        const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
-        setFluxs(fluxs);
-        setYearOptions(defaultAnnee);
-      } catch (e) {
-        console.log(e);
-      }
-    };
     fetchFlux();
   }, []);
   useEffect(() => {
@@ -269,7 +272,11 @@ export default function SearchFlux() {
           }),
         }
       );
-      alert(`the product ${selectedFlux?.libelle} has been updated}`);
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: `Le produit ${selectedFlux?.sh8} a ete mis a jour`,
+      });
       setIsShow(false);
     } catch (error) {
       console.log(`Error: ${error}`);
@@ -325,6 +332,72 @@ export default function SearchFlux() {
       exportToExcel(listFlux);
     } else {
       setAsk(true);
+    }
+  };
+
+  const askAllDelete = () => {
+    if (listFlux.length >= 1) {
+      deleteThem(listFlux);
+    } else {
+      setAskDelete(true);
+    }
+  };
+
+  const deleteAll = async (data: any) => {
+    if (data.length <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "",
+        text: `Aucun produits a supprimer`,
+      });
+      setAskDelete(false);
+      return;
+    }
+    try {
+      // Itérer sur chaque ID de produit dans data
+      for (const fluxList of data) {
+        await fetch(
+          `http://localhost:3000/api/instat/flux/delete/${fluxList.id_flux}`,
+          {
+            method: "DELETE",
+          }
+        );
+      }
+      setAskDelete(false);
+      // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "La suppression de tous les flux est un succes",
+      });
+
+      fetchFlux();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteThem = async (data: any) => {
+    try {
+      // Itérer sur chaque ID de produit dans data
+      for (const fluxList of data) {
+        await fetch(
+          `http://localhost:3000/api/instat/flux/delete/${fluxList.id_flux}`,
+          {
+            method: "DELETE",
+          }
+        );
+      }
+      // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
+      fetchFlux();
+      setListFlux([]);
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "La suppression de ces fluxs est un succes",
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -463,6 +536,38 @@ export default function SearchFlux() {
                   onClick={() => exportToExcel(fluxs)}
                 >
                   Enregistrer
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+      </Modal>
+      {/* MODAL ASK DELETE */}
+      <Modal show={askDelete} onHide={onHide} className="modal" size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Aucun produits selectionnees voulez vous tout supprimer?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="grid-example">
+          <Container>
+            <Row style={{ marginBottom: "20px" }}>
+              <Col xs={12} md={6}>
+                <Button
+                  variant="warning"
+                  style={{ width: "300px" }}
+                  onClick={onHide}
+                >
+                  Annuler
+                </Button>
+              </Col>
+              <Col xs={6} md={6}>
+                <Button
+                  variant="danger"
+                  style={{ width: "300px" }}
+                  onClick={() => deleteAll(fluxs)}
+                >
+                  Supprimer
                 </Button>
               </Col>
             </Row>
@@ -654,9 +759,19 @@ export default function SearchFlux() {
           <Button
             className="buttonMain"
             style={{
+              marginLeft: "36%",
+            }}
+            variant="danger"
+            onClick={askAllDelete}
+          >
+            Suprimmer
+          </Button>
+          <Button
+            className="buttonMain"
+            style={{
               backgroundColor: "#003529",
               border: "#003529",
-              marginLeft: "66%",
+              marginLeft: "5%",
             }}
             onClick={askAll}
           >
