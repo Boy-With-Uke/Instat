@@ -272,6 +272,7 @@ export default function SearchFlux() {
           }),
         }
       );
+      fetchFlux()
       Swal.fire({
         icon: "success",
         title: "Succès",
