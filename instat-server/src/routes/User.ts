@@ -34,7 +34,35 @@ router.get("/findOneConnect/:email/:password", async (req, res) => {
     result = null;
     message = "User not found";
   }
-  res.json({message, result });
+  res.json({ message, result });
+});
+
+router.post("/new", async (req, res) => {
+  const userMail = req.body.email;
+  const userPass = req.body.password;
+
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: userMail,
+    },
+  });
+  let message;
+  let User;
+  if (existingUser !== null) {
+    message = "L'utilisateur avec le mail \"" + userMail + '" existe déjà';
+
+    User = null;
+  } else {
+    const newUser = await prisma.user.create({
+      data: {
+        email: userMail,
+        password: userPass,
+      },
+    });
+    User = newUser;
+  }
+
+  res.json({ message, User });
 });
 
 export default router;
