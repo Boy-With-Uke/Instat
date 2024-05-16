@@ -8,12 +8,15 @@ import {
   faChartColumn,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 export default function Nav() {
+  const navigate = useNavigate();
   return (
     <div className="col-2 sidebar">
       <div className="topSection">
-        <Link to={"/"}>
+        <Link to={"/main"}>
           <div className="circle">
             <FontAwesomeIcon className="icon" icon={faSearch} />
           </div>
@@ -36,11 +39,16 @@ export default function Nav() {
             <FontAwesomeIcon className="icon" icon={faBell} />
           </div>
         </Link>
-        <Link to={"/logout"}>
-          <div className="circle">
-            <FontAwesomeIcon className="icon" icon={faArrowRightFromBracket} />
-          </div>
-        </Link>
+        <div className="circle">
+          <FontAwesomeIcon
+            className="icon"
+            icon={faArrowRightFromBracket}
+            onClick={() => {
+              Cookies.remove("user");
+              navigate("/");
+            }}
+          />
+        </div>
       </div>
     </div>
   );

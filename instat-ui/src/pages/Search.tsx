@@ -4,10 +4,19 @@ import "../assets/radio.css";
 import "../assets/searchBar.css";
 import SearchFlux from "../components/SearchFlux";
 import SearchProduct from "../components/SearchProduct";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 export default function Search() {
   const [isFlux, setIsFlux] = useState(true);
+  const userCoockies = Cookies.get("user");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!userCoockies) {
+      navigate("/");
+    }
+  });
   function handleToogleFlux() {
     setIsFlux(true);
     console.log(isFlux);
@@ -19,16 +28,18 @@ export default function Search() {
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
-        <div style={{ display: "flex"}}>
+        <div style={{ display: "flex" }}>
           <Sidebar />
           <div
             className="col-11 main"
             style={{
               margin: "0px",
             }}
-            
           >
-            <div className="radio-inputs" style={{marginBottom: "20px", marginTop: '-20px'}}>
+            <div
+              className="radio-inputs"
+              style={{ marginBottom: "20px", marginTop: "-20px" }}
+            >
               <label className="radio">
                 <input
                   type="radio"
@@ -40,7 +51,11 @@ export default function Search() {
               </label>
 
               <label className="radio">
-                <input type="radio" name="radio"onClick={handleToogleProduct}/>
+                <input
+                  type="radio"
+                  name="radio"
+                  onClick={handleToogleProduct}
+                />
                 <span className="name">Produits</span>
               </label>
             </div>

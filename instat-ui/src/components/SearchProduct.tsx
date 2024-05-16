@@ -339,7 +339,7 @@ export default function SearchProduct() {
       // Itérer sur chaque ID de produit dans data
       for (const productList of data) {
         await fetch(
-          `http://localhost:3000/api/instat/product/delete/${productList.id_product}`,
+          `http://localhost:3000/api/instat/product/de••••••lete/${productList.id_product}`,
           {
             method: "DELETE",
           }

@@ -1,6 +1,17 @@
 import Sidebar from "../components/Sidebar";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import '../assets/main.css'
 export default function Notifications() {
+  const userCoockies = Cookies.get("user");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!userCoockies) {
+      navigate("/");
+    }
+  });
+
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer" >

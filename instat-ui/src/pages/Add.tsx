@@ -1,11 +1,20 @@
 import Sidebar from "../components/Sidebar";
 import "../assets/main.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddFlux from "../components/AddFlux";
 import AddProduct from "../components/AddProduct";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 export default function Search() {
   const [isFlux, setIsFlux] = useState(true);
+  const userCoockies = Cookies.get("user");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!userCoockies) {
+      navigate("/");
+    }
+  });
   function handleToogleFlux() {
     setIsFlux(true);
   }

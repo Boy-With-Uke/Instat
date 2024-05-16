@@ -12,6 +12,29 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.get("/findOneConnect/:email/:password", async (req, res) => {
+  const userMail = req.params.email;
+  const userPass = req.params.password;
 
+  const Users = await prisma.user.findUnique({
+    where: {
+      email: userMail,
+      password: userPass,
+    },
+    select: {
+      id_user: true,
+    },
+  });
+  let result;
+  let message;
+  if (Users !== null) {
+    result = Users.id_user;
+    message = "User found";
+  } else {
+    result = null;
+    message = "User not found";
+  }
+  res.json({message, result });
+});
 
 export default router;

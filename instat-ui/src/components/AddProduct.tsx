@@ -6,8 +6,11 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
+import Cookies from "js-cookie";
 
 export default function AddProduct() {
+  const userCoockies = Cookies.get("user");
+  const userId = userCoockies;
   const [sh8, setSh8] = useState(0);
   const [anneeApp, setAnneeApp] = useState(new Date().getFullYear());
   const [isShowModalFile, setIsShowModalFile] = useState(false);
@@ -28,7 +31,7 @@ export default function AddProduct() {
   const handleAddProduct = async (productData: Product) => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/instat/product/new",
+        `http://localhost:3000/api/instat/product/new/${userId}`,
         {
           method: "POST",
           headers: {

@@ -14,6 +14,8 @@ import {
   LineElement,
   PointElement,
 } from "chart.js";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 import { title } from "process";
 ChartJS.register(
   CategoryScale,
@@ -33,6 +35,16 @@ export default function Dashboard() {
   const [bigData, setBigData] = useState([]);
   const [dataExp, setDataExp] = useState([]);
   const [dataImp, setDataImp] = useState([]);
+
+  const userCoockies = Cookies.get("user");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!userCoockies) {
+      navigate("/");
+    }
+  });
+
+
   const uniqueYears = Array.from(
     new Set(bigData.map((item: any) => item.annee)),
     (item) => Number(item)
