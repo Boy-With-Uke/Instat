@@ -4,12 +4,12 @@ import Dashboard from "./pages/Dashboard";
 import Notifications from "./pages/Notifications";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Essaie from "./components/essaie";
-import Auth from "./pages/Auth";
+import Connect from "./pages/Connect";
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Auth />} />
+        <Route path="/" element={<Connect />} />
         <Route path="/main" element={<Search />} />
         <Route path="/add" element={<Add />} />
         <Route path="/dash" element={<Dashboard />} />

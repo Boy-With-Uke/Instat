@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-export default function Auth() {
+export default function Connect() {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -34,27 +34,29 @@ export default function Auth() {
   };
   return (
     <>
-      <Container>
-        <Form>
-          <Row>
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              type="email"
-              value={mail}
-              onChange={(event) => setMail(event.target.value)}
-            />
-          </Row>
-          <Row>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </Row>
-          <Button onClick={handleConnect}>Connexion</Button>
-        </Form>
-      </Container>
+      <div className="container-fluid bg-dark bg-gradient authSection">
+        <Container>
+          <Form>
+            <Row>
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                type="email"
+                value={mail}
+                onChange={(event) => setMail(event.target.value)}
+              />
+            </Row>
+            <Row>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </Row>
+            <Button onClick={handleConnect}>Connexion</Button>
+          </Form>
+        </Container>
+      </div>
     </>
   );
 }
