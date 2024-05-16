@@ -68,8 +68,17 @@ export default function AddProduct() {
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = XLSX.utils.sheet_to_json(worksheet);
+            const numberOfLines = json.length;
+            
+            if (numberOfLines > 1200) {
+              Swal.fire({
+                icon: "error",
+                title: "Erreur",
+                text: "Le nombre de lignes dépasse 1200. Veuillez sélectionner un fichier avec moins de 1200 lignes.",
+              });
+              return;
+            }
 
-            // Valider les données du fichier
             const invalidData: { row: number; columns: string[] }[] = [];
             const isValidData = json.every((product: any, index: number) => {
               const missingProperties: string[] = [];
