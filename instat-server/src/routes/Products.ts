@@ -13,7 +13,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/new", async (req, res) => {
+router.post("/new/:userId", async (req, res) => {
+  const userId = parseInt(req.params.userId);
   try {
     const {
       sh8_product,
@@ -33,6 +34,11 @@ router.post("/new", async (req, res) => {
     const sh2_string = sh8_string.slice(0, 2);
     const product = await prisma.product.create({
       data: {
+        utilisateur: {
+          connect: {
+            id_user: userId,
+          },
+        },
         sh8_product: sh8_string,
         sh2_product: sh2_string,
         libelle_product,

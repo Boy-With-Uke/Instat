@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id_user  Int       @id @default(autoincrement())
+  email    String    @unique
+  password String
+  product  Product[]
+  flux     Flux[]
+}
+
 model Product {
   id_product          Int    @id @default(autoincrement())
   sh8_product         String @unique
@@ -14,6 +22,8 @@ model Product {
   libelle_product     String
   AnneeApparition     Int
   TrimestreApparition Int
+  AddingUser          Int
+  utilisateur         User   @relation(fields: [AddingUser], references: [id_user], onDelete: Cascade, onUpdate: Cascade)
   flux                Flux[] // Relation one-to-many avec Flux
 
   @@unique([sh8_product, id_product])
@@ -35,5 +45,6 @@ model Flux {
   quantite                       Int
   prix_unitaire                  Int
   prix_unitaire_moyenne_annuelle Int?
+  User                           User? @relation(fields: [userId_user], references: [id_user])
+  userId_user                    Int?
 }
-
