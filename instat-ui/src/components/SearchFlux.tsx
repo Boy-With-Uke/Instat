@@ -249,7 +249,7 @@ export default function SearchFlux() {
     event.stopPropagation();
 
     try {
-      await fetch(`http://localhost:3000/api/instat/flux/delete/${fluxId}`, {
+      await fetch(`http://localhost:3000/api/instat/flux/delete/${fluxId}/${userId}`, {
         method: "DELETE",
       });
 
@@ -264,7 +264,7 @@ export default function SearchFlux() {
     event.stopPropagation();
     try {
       await fetch(
-        `http://localhost:3000/api/instat/flux/update/${selectedFlux?.id_flux}`,
+        `http://localhost:3000/api/instat/flux/update/${selectedFlux?.id_flux}/${userId}`,
         {
           method: "PUT",
           headers: {

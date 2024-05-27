@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
+import Cookies from "js-cookie";
 
 export default function AddFlux() {
   type Flux = {
@@ -19,6 +20,8 @@ export default function AddFlux() {
     quantite: number;
     prix_unitaire: number;
   };
+  const userCoockies = Cookies.get("user");
+  const userId = userCoockies;
 
   const [sh8, setSh8] = useState(0);
   const [type, setType] = useState("E");
@@ -170,7 +173,7 @@ export default function AddFlux() {
 
   const handleAddFlux = async (fluxData: Flux) => {
     try {
-      const reponse = await fetch("http://localhost:3000/api/instat/flux/new", {
+      const reponse = await fetch(`http://localhost:3000/api/instat/flux/new/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

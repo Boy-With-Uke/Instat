@@ -50,7 +50,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/new", async (req, res) => {
+router.post("/new/:userId", async (req, res) => {
   try {
     const {
       sh8,
@@ -77,7 +77,18 @@ router.post("/new", async (req, res) => {
     ) {
       return res.status(400).json({ error: "Missing parameter" });
     }
-
+    const userId = parseInt(req.params.userId);
+    const newNotif = await prisma.notification.create({
+      data: {
+        user: {
+          connect: {
+            id_user: userId,
+          },
+        },
+        typeDajout: "flux",
+        typeAction: "Ajout",
+      },
+    });
     const associatedProduct = await prisma.product.findFirst({
       where: {
         sh8_product: sh8.toString(),
@@ -113,7 +124,7 @@ router.post("/new", async (req, res) => {
   }
 });
 
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id/:userId", async (req, res) => {
   const { trimestre, valeur, poids_net, quantite, prix_unitaire, type, annee } =
     req.body;
   const id_flux = parseInt(req.params.id);
@@ -156,6 +167,18 @@ router.put("/update/:id", async (req, res) => {
         prix_unitaire,
       },
     });
+    const userId = parseInt(req.params.userId);
+    const newNotif = await prisma.notification.create({
+      data: {
+        user: {
+          connect: {
+            id_user: userId,
+          },
+        },
+        typeDajout: "flux",
+        typeAction: "Modification",
+      },
+    });
 
     await updatePrixAnnuelle(sh8 as string, annee, type);
     const messsage = "Flux has been updated successfully";
@@ -165,7 +188,7 @@ router.put("/update/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id/:userId", async (req, res) => {
   const id_flux = parseInt(req.params.id);
   if (!id_flux || isNaN(id_flux)) {
     return res
@@ -192,6 +215,18 @@ router.delete("/delete/:id", async (req, res) => {
       where: { id_flux },
     });
     await updatePrixAnnuelle(sh8, annee, type);
+    const userId = parseInt(req.params.userId);
+    const newNotif = await prisma.notification.create({
+      data: {
+        user: {
+          connect: {
+            id_user: userId,
+          },
+        },
+        typeDajout: "flux",
+        typeAction: "Supression",
+      },
+    });
     const message = "The flux has been deleted successfully";
     res.json({ message });
   } catch (error) {
