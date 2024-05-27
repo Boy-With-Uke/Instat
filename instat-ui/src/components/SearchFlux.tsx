@@ -181,7 +181,7 @@ export default function SearchFlux() {
       const reponse = await fetch("http://localhost:3000/api/instat/flux/");
 
       const fluxs: Flux[] = await reponse.json();
-      const years = Array.from(new Set(fluxs.map((flux) => flux.annee)));
+      const years = Array.from(new Set(fluxs.map((flux) => flux.annee))).sort((a, b) => a - b);
 
       // Utiliser les années uniques
 

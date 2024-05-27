@@ -124,7 +124,7 @@ export default function SearchProduct() {
 
       const years = Array.from(
         new Set(products.map((product) => product.AnneeApparition))
-      );
+      ).sort((a, b) => a - b); 
       const yearOptions = years.map((year) => ({
         value: year.toString(),
         label: year.toString(),

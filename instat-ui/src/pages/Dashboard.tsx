@@ -2,6 +2,7 @@ import Sidebar from "../components/Sidebar";
 import "../assets/main.css";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { useEffect, useState } from "react";
+import Select from "react-select";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,12 +31,16 @@ ChartJS.register(
 );
 
 export default function Dashboard() {
+  const [trimestreOptions, setTrimestreOptions] = useState("3");
   const [dataRight, setDataRight] = useState([]);
   const [dataLeft, setDataLeft] = useState([]);
   const [bigData, setBigData] = useState([]);
   const [dataExp, setDataExp] = useState([]);
   const [dataImp, setDataImp] = useState([]);
-
+  const [annneeOption, setAnneeOption] = useState("2024");
+  const [yearOptions, setYearOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const userCoockies = Cookies.get("user");
   const navigate = useNavigate();
   useEffect(() => {
@@ -44,18 +49,56 @@ export default function Dashboard() {
     }
   });
 
+  const handleYearChange = (selectedOption: any) => {
+    setAnneeOption(selectedOption.value);
+  };
+
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      width: 170,
+      marginRight: 10,
+      border: "none",
+      outline: "none",
+      backgroundColor: "#003529",
+      color: "white",
+      "&:hover": {
+        border: "none",
+        outline: "none",
+      },
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: "white",
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#003529" : "#fff",
+      color: state.isSelected ? "#fff" : "#003529",
+      "&:hover": {
+        backgroundColor: "#003529",
+        color: "#fff",
+      },
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      width: 170,
+    }),
+  };
+  const handleTrimestreChange = (selectedOption: any) => {
+    setTrimestreOptions(selectedOption.value);
+  };
 
   const uniqueYears = Array.from(
     new Set(bigData.map((item: any) => item.annee)),
     (item) => Number(item)
   ).sort((a, b) => a - b);
-  console.log(uniqueYears);
 
   const [trimestre, setTrimestre] = useState(
     Math.ceil((new Date().getMonth() + 1) / 3)
   );
   const [annee, setAnnee] = useState(new Date().getFullYear());
-  const [type, setType] = useState("I");
+  const [type, setType] = useState("E");
 
   useEffect(() => {
     const fetchFlux = async () => {
@@ -63,6 +106,16 @@ export default function Dashboard() {
         const response = await fetch("http://localhost:3000/api/instat/flux/");
 
         const dataJson = await response.json();
+        // Utiliser les années uniques
+        const years = Array.from(
+          new Set(dataJson.map((flux: any) => flux.annee))
+        ).sort((a: any, b: any) => a - b);
+        const yearOptions = years.map((year: any) => ({
+          value: year.toString(),
+          label: year.toString(),
+        }));
+        const defaultAnnee = [{ value: "", label: "" }, ...yearOptions];
+        setYearOptions(defaultAnnee);
 
         setBigData(dataJson);
         const filteredDataAllyear = dataJson.filter(
@@ -71,12 +124,14 @@ export default function Dashboard() {
 
         setDataLeft(filteredDataAllyear);
 
+        console.log(annneeOption);
         const filteredFluxsThisyear = dataJson.filter(
           (flux: any) =>
-            flux.annee === annee &&
+            flux.annee === parseInt(annneeOption) &&
             flux.type === type &&
-            flux.trimestre === trimestre
+            flux.trimestre === parseInt(trimestreOptions)
         );
+        console.log(filteredFluxsThisyear);
         setDataRight(filteredFluxsThisyear);
 
         const filteredtypeE = dataJson.filter((flux: any) => flux.type === "E");
@@ -91,7 +146,7 @@ export default function Dashboard() {
       }
     };
     fetchFlux();
-  }, [annee, trimestre, type]);
+  }, [annneeOption, trimestreOptions, type]);
 
   // --------------------------RIGHT--------------------------
   const topThreeLocations = dataRight.reduce((acc: any, item: any) => {
@@ -130,6 +185,12 @@ export default function Dashboard() {
     acc[item.sh8] += item.valeur;
     return acc;
   }, {});
+  const trimestreBase = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
+  ];
 
   const sortedTop5Product = Object.entries(top5AllYear)
     .sort((a: any, b: any) => b[1] - a[1])
@@ -254,7 +315,7 @@ export default function Dashboard() {
         display: true,
         text: `Top 3 des produits les plus ${
           type === "E" ? "exporter" : "importer"
-        } ce trimestre, annee : ${annee}`,
+        } , trimestre:${trimestreOptions}, annee : ${annneeOption}`,
         fontSize: 24,
         fontColor: "white",
       },
@@ -279,6 +340,36 @@ export default function Dashboard() {
             }}
           >
             <div className="dash-section">
+              <div
+                className="row searchContainer"
+                style={{ marginTop: "-50px", marginLeft: "60%" }}
+              >
+                <div className="filter">
+                  <Select
+                    className="custom-select"
+                    defaultValue={{ value: "2024", label: "2024" }}
+                    options={yearOptions}
+                    value={yearOptions.find(
+                      (option) => option.value === annneeOption
+                    )}
+                    onChange={handleYearChange}
+                    isSearchable={false}
+                    styles={customStyles}
+                  />
+                  <Select
+                    className="custom-select last-select"
+                    defaultValue={{ value: "1", label: "1" }}
+                    options={trimestreBase}
+                    value={trimestreBase.find(
+                      (option) => option.value === trimestreOptions
+                    )}
+                    onChange={handleTrimestreChange}
+                    isSearchable={false}
+                    styles={customStyles}
+                  />
+                </div>
+              </div>
+
               <div className="row top">
                 <div className="col-6 left">
                   <Bar data={barDataTop5ProductAllYear} options={barOptions1} />
@@ -290,24 +381,23 @@ export default function Dashboard() {
                   />
                 </div>
               </div>
-
               <div
                 className="row midle
               "
               >
                 <div className="radio-inputs">
                   <label className="radio">
-                    <input
-                      defaultChecked
-                      type="radio"
-                      name="radio"
-                      onClick={handleImp}
-                    />
+                    <input type="radio" name="radio" onClick={handleImp} />
                     <span className="name">Importations</span>
                   </label>
 
                   <label className="radio">
-                    <input type="radio" name="radio" onClick={handleExp} />
+                    <input
+                      defaultChecked
+                      type="radio"
+                      name="radio"
+                      onClick={handleExp}
+                    />
 
                     <span className="name">Exportation</span>
                   </label>
