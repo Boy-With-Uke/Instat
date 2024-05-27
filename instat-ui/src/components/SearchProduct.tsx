@@ -120,7 +120,7 @@ export default function SearchProduct() {
   function handleCheck(event: ChangeEvent<HTMLInputElement>) {
     setWithout(event.target.checked);
   }
-  const fetchFlux = async () => {
+  const fetchProduct = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/instat/product/");
       const products: Product[] = await response.json();
@@ -141,12 +141,12 @@ export default function SearchProduct() {
     }
   };
   useEffect(() => {
-    fetchFlux();
+    fetchProduct();
   }, []);
 
   useEffect(() => {
     if (without) {
-      const fetchFlux = async () => {
+      const fetchProduct = async () => {
         try {
           const reponse = await fetch(
             `http://localhost:3000/api/instat/product/findMany/${annneeOption}/${trimestreOptions}`
@@ -157,7 +157,7 @@ export default function SearchProduct() {
           console.log(e);
         }
       };
-      fetchFlux();
+      fetchProduct();
     }
   }, [without, annneeOption, trimestreOptions]);
 
@@ -317,7 +317,7 @@ export default function SearchProduct() {
       // Itérer sur chaque ID de produit dans data
       for (const productList of data) {
         await fetch(
-          `http://localhost:3000/api/instat/product/delete/${productList.id_product}`,
+          `http://localhost:3000/api/instat/product/delete/${productList.id_product}/${userId}`,
           {
             method: "DELETE",
           }
@@ -331,7 +331,7 @@ export default function SearchProduct() {
         text: "La suppression de tous les produits est un succes",
       });
 
-      fetchFlux();
+      fetchProduct();
     } catch (error) {
       console.error(error);
     }
@@ -342,14 +342,14 @@ export default function SearchProduct() {
       // Itérer sur chaque ID de produit dans data
       for (const productList of data) {
         await fetch(
-          `http://localhost:3000/api/instat/product/de••••••lete/${productList.id_product}`,
+          `http://localhost:3000/api/instat/product/delete/${productList.id_product}/${userId}`,
           {
             method: "DELETE",
           }
         );
       }
       // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
-      fetchFlux();
+      fetchProduct();
       setListProduct([]);
       Swal.fire({
         icon: "success",

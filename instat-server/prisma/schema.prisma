@@ -17,16 +17,17 @@ model User {
 }
 
 model Product {
-  id_product          Int      @id @default(autoincrement())
-  sh8_product         String   @unique
+  id_product          Int       @id @default(autoincrement())
+  sh8_product         String    @unique
   sh2_product         String
   libelle_product     String
   AnneeApparition     Int
   TrimestreApparition Int
   AddingUser          Int
-  utilisateur         User     @relation(fields: [AddingUser], references: [id_user], onDelete: Cascade, onUpdate: Cascade)
+  utilisateur         User      @relation(fields: [AddingUser], references: [id_user], onDelete: Cascade, onUpdate: Cascade)
   flux                Flux[] // Relation one-to-many avec Flux
-  dateAjout           DateTime @default(now())
+  dateAjout           DateTime  @default(now())
+  dateModif           DateTime?
 
   @@unique([sh8_product, id_product])
 }
@@ -47,9 +48,10 @@ model Flux {
   quantite                       Int
   prix_unitaire                  Int
   prix_unitaire_moyenne_annuelle Int?
-  User                           User?    @relation(fields: [userId_user], references: [id_user])
+  User                           User?     @relation(fields: [userId_user], references: [id_user])
   userId_user                    Int?
-  dateAjout                      DateTime @default(now())
+  dateAjout                      DateTime  @default(now())
+  dateModif                      DateTime?
 }
 
 model notification {
@@ -59,4 +61,5 @@ model notification {
   dateCreated      DateTime @default(now())
   typeDajout       String
   typeAction       String
+  message          String?
 }

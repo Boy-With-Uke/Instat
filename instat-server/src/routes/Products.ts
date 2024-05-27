@@ -91,6 +91,7 @@ router.put("/update/:id/:userId", async (req, res) => {
         libelle_product,
         AnneeApparition,
         TrimestreApparition,
+        dateModif: new Date(),
       },
       include: { flux: true },
     });
@@ -119,10 +120,16 @@ router.delete("/delete/:id/:userId", async (req, res) => {
     return res.status(400).json({ error: "Id must be a number" });
   }
   try {
-    await prisma.product.delete({
+    const deletedProduct = await prisma.product.delete({
       where: { id_product: id_product },
     });
+
     const userId = parseInt(req.params.userId);
+    const userDid = await prisma.user.findFirst({
+      where: {
+        id_user: userId,
+      },
+    });
     const newNotif = await prisma.notification.create({
       data: {
         user: {
@@ -130,8 +137,9 @@ router.delete("/delete/:id/:userId", async (req, res) => {
             id_user: userId,
           },
         },
+        message: `L'utilisateur avec l'email ${userDid?.email} a supprimmer le produit  avec le sh8:${deletedProduct.sh8_product}`,
         typeDajout: "product",
-        typeAction: "Suppression",
+        typeAction: "Supression",
       },
     });
     const message = "The product has been deleted successfully";

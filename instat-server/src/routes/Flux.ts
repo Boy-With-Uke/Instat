@@ -165,9 +165,11 @@ router.put("/update/:id/:userId", async (req, res) => {
         poids_net,
         quantite,
         prix_unitaire,
+        dateModif: new Date(),
       },
     });
     const userId = parseInt(req.params.userId);
+
     const newNotif = await prisma.notification.create({
       data: {
         user: {
@@ -211,11 +213,16 @@ router.delete("/delete/:id/:userId", async (req, res) => {
     const sh8 = willDelete?.sh8 as string;
     const type = willDelete?.type as string;
     const annee = willDelete?.annee as number;
-    await prisma.flux.delete({
+    const deletedFlux = await prisma.flux.delete({
       where: { id_flux },
     });
     await updatePrixAnnuelle(sh8, annee, type);
     const userId = parseInt(req.params.userId);
+    const userDid = await prisma.user.findFirst({
+      where: {
+        id_user: userId,
+      },
+    });
     const newNotif = await prisma.notification.create({
       data: {
         user: {
@@ -223,10 +230,13 @@ router.delete("/delete/:id/:userId", async (req, res) => {
             id_user: userId,
           },
         },
+        message: `L'utilisateur avec l'email ${userDid?.email} a supprimmer le flux  avec le sh8:${deletedFlux.sh8}`,
+
         typeDajout: "flux",
         typeAction: "Supression",
       },
     });
+
     const message = "The flux has been deleted successfully";
     res.json({ message });
   } catch (error) {

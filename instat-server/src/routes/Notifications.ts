@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
         typeAction: true,
         typeDajout: true,
         dateCreated: true,
+        message: true,
       },
     });
     res.status(200).json(notifications);

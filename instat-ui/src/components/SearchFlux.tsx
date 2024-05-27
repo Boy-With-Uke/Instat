@@ -367,7 +367,7 @@ export default function SearchFlux() {
       // Itérer sur chaque ID de produit dans data
       for (const fluxList of data) {
         await fetch(
-          `http://localhost:3000/api/instat/flux/delete/${fluxList.id_flux}`,
+          `http://localhost:3000/api/instat/flux/delete/${fluxList.id_flux}/${userId}`,
           {
             method: "DELETE",
           }
@@ -392,7 +392,7 @@ export default function SearchFlux() {
       // Itérer sur chaque ID de produit dans data
       for (const fluxList of data) {
         await fetch(
-          `http://localhost:3000/api/instat/flux/delete/${fluxList.id_flux}`,
+          `http://localhost:3000/api/instat/flux/delete/${fluxList.id_flux}/${userId}`,
           {
             method: "DELETE",
           }
