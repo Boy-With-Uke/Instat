@@ -68,18 +68,21 @@ export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [selectedNotification, setSelectedNotifications] =
     useState<Notification | null>(null);
-  const [filteredFluxs, setFilteredFluxs] = useState<Flux[]>([]);
+    const [filteredFluxs, setFilteredFluxs] = useState<Flux[]>([]);
+    const [filteredFluxs2, setFilteredFluxs2] = useState<Flux[]>([]);
   const [filteredProduct2, setFilteredProduct2] = useState<Product[]>([]);
   const [filteredProduct, setFilteredProduct] = useState<Product[]>([]);
 
   const [isShow, setIsShow] = useState(false);
   const [showFilteredFluxs, setShowFilteredFluxs] = useState(false);
+  const [showFilteredFluxs2, setShowFilteredFluxs2] = useState(false);
   const [showFilteredProduct, setShowFilteredProduct] = useState(false);
   const [showFilteredProduct2, setShowFilteredProduct2] = useState(false);
 
   function onHide() {
     setIsShow(false);
     setShowFilteredFluxs(false);
+    setShowFilteredFluxs2(false);
     setShowFilteredProduct(false);
     setShowFilteredProduct2(false);
   }
@@ -219,6 +222,16 @@ export default function Notifications() {
         );
         setFilteredProduct2(filtered);
         setShowFilteredProduct2(true);
+      }
+      if(notif.typeDajout === "flux") {
+        const filtered = fluxs.filter((flux) =>
+          moment(flux.dateModif).isSame(
+            moment(notif.dateCreated).startOf("second"),
+            "second"
+          )
+        );
+        setFilteredFluxs2(filtered);
+        setShowFilteredFluxs2(true);
       }
     }
   };
@@ -599,6 +612,123 @@ export default function Notifications() {
                 </Container>
               </Modal.Body>
             </Modal>
+            {/* FULUX MODIF */}
+
+            <Modal
+              show={showFilteredFluxs2}
+              onHide={onHide}
+              className="modal"
+              size="xl"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>
+                  Flux ajoutés le{" "}
+                  {moment(selectedNotification?.dateCreated).format(
+                    "MMMM Do YYYY"
+                  )}
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="grid-example">
+                <Container>
+                  {filteredFluxs2.length > 0 ? (
+                    <>
+                      <table className="table">
+                        <thead className="table-dark">
+                          <tr>
+                            <th scope="col" className="bordering-left">
+                              Flux
+                            </th>
+                            <th scope="col">Annee</th>
+                            <th scope="col">Timestre</th>
+                            <th scope="col">SH8</th>
+                            <th scope="col">Libelle</th>
+                            <th scope="col">Valeur</th>
+                            <th scope="col">Poids net</th>
+                            <th scope="col">Quantité</th>
+                            <th scope="col">Prix unitaire</th>
+                            <th scope="col">Prix u/ann</th>
+                            <th
+                              scope="col"
+                              className="bordering-right"
+                              style={{ minWidth: "95px" }}
+                            >
+                              SH2
+                            </th>
+                          </tr>
+                        </thead>
+                        <br />
+                        <tbody className="flux-table">
+                          {filteredFluxs2
+                            .slice(startIndexFlux, endIndexFlux)
+                            .map((flux) => (
+                              <tr key={flux.id_flux}>
+                                <td>{flux.type}</td>
+                                <td>{flux.annee}</td>
+                                <td>{flux.trimestre}</td>
+                                <td>{flux.sh8}</td>
+                                <td
+                                  style={{
+                                    maxHeight: "50px",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {flux.libelle.length > 20 ? (
+                                    <LibelleDropdown libelle={flux.libelle} />
+                                  ) : (
+                                    flux.libelle
+                                  )}
+                                </td>
+                                <td>{flux.valeur}</td>
+                                <td>{flux.poids_net}</td>
+                                <td>{flux.quantite}</td>
+                                <td>{flux.prix_unitaire}</td>
+                                <td>{flux.prix_unitaire_moyenne_annuelle}</td>
+                                <td>{flux.sh2}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                      <div className="row pagination">
+                        <Col xs={6} md={6} style={{ display: "flex" }}>
+                          <div style={{ marginLeft: "75%" }}>
+                            <ReactPaginate
+                              previousLabel={"<"}
+                              nextLabel={">"}
+                              breakLabel={"..."}
+                              pageCount={Math.ceil(
+                                filteredFluxs2.length / itemsPerPage
+                              )}
+                              marginPagesDisplayed={2}
+                              pageRangeDisplayed={5}
+                              onPageChange={handlePageChangeModal1}
+                              containerClassName={"pagination"}
+                              pageClassName={"page-item"}
+                              pageLinkClassName={"page-link"}
+                              previousClassName={"page-item"}
+                              previousLinkClassName={"page-link"}
+                              nextClassName={"page-item"}
+                              nextLinkClassName={"page-link"}
+                              breakClassName={"page-item"}
+                              breakLinkClassName={"page-link"}
+                              activeClassName={"active"}
+                            />{" "}
+                          </div>
+                        </Col>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Row>
+                        <p>L'action a deja ete annuler.</p>
+                      </Row>
+                    </>
+                  )}
+                </Container>
+              </Modal.Body>
+            </Modal>
+
+
+
 
             <Modal
               show={showFilteredProduct2}
