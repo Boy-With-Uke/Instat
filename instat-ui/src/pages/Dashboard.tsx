@@ -31,7 +31,7 @@ ChartJS.register(
 );
 
 export default function Dashboard() {
-  const [trimestreOptions, setTrimestreOptions] = useState("3");
+  const [trimestreOptions, setTrimestreOptions] = useState("2");
   const [dataRight, setDataRight] = useState([]);
   const [dataLeft, setDataLeft] = useState([]);
   const [bigData, setBigData] = useState([]);

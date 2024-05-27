@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { faEdit, faRotateRight, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faRotateRight,
+  faSearch,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 import Checkbox from "@mui/material/Checkbox";
@@ -181,7 +186,9 @@ export default function SearchFlux() {
       const reponse = await fetch("http://localhost:3000/api/instat/flux/");
 
       const fluxs: Flux[] = await reponse.json();
-      const years = Array.from(new Set(fluxs.map((flux) => flux.annee))).sort((a, b) => a - b);
+      const years = Array.from(new Set(fluxs.map((flux) => flux.annee))).sort(
+        (a, b) => a - b
+      );
 
       // Utiliser les années uniques
 
