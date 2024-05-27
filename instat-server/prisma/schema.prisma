@@ -8,23 +8,25 @@ datasource db {
 }
 
 model User {
-  id_user  Int       @id @default(autoincrement())
-  email    String    @unique
-  password String
-  product  Product[]
-  flux     Flux[]
+  id_user      Int            @id @default(autoincrement())
+  email        String         @unique
+  password     String
+  product      Product[]
+  flux         Flux[]
+  notification notification[]
 }
 
 model Product {
-  id_product          Int    @id @default(autoincrement())
-  sh8_product         String @unique
+  id_product          Int      @id @default(autoincrement())
+  sh8_product         String   @unique
   sh2_product         String
   libelle_product     String
   AnneeApparition     Int
   TrimestreApparition Int
   AddingUser          Int
-  utilisateur         User   @relation(fields: [AddingUser], references: [id_user], onDelete: Cascade, onUpdate: Cascade)
+  utilisateur         User     @relation(fields: [AddingUser], references: [id_user], onDelete: Cascade, onUpdate: Cascade)
   flux                Flux[] // Relation one-to-many avec Flux
+  dateAjout           DateTime @default(now())
 
   @@unique([sh8_product, id_product])
 }
@@ -45,6 +47,16 @@ model Flux {
   quantite                       Int
   prix_unitaire                  Int
   prix_unitaire_moyenne_annuelle Int?
-  User                           User? @relation(fields: [userId_user], references: [id_user])
+  User                           User?    @relation(fields: [userId_user], references: [id_user])
   userId_user                    Int?
+  dateAjout                      DateTime @default(now())
+}
+
+model notification {
+  id_notification  Int      @id @unique @default(autoincrement())
+  utilisateurAjout Int
+  user             User     @relation(fields: [utilisateurAjout], references: [id_user])
+  dateCreated      DateTime @default(now())
+  typeDajout       String
+  typeAction       String
 }

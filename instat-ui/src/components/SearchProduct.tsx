@@ -20,6 +20,7 @@ import Row from "react-bootstrap/Row";
 import LibelleDropdown from "./LibelleDropDown";
 import Form from "react-bootstrap/Form";
 import Swal from "sweetalert2";
+import Cookies from "js-cookie";
 
 export default function SearchProduct() {
   type Product = {
@@ -30,6 +31,8 @@ export default function SearchProduct() {
     AnneeApparition: number;
     TrimestreApparition: number;
   };
+  const userCoockies = Cookies.get("user");
+  const userId = userCoockies;
   const trimestreBase = [
     { value: "all", label: "Trimestre" },
     { value: "1", label: "1" },
@@ -124,7 +127,7 @@ export default function SearchProduct() {
 
       const years = Array.from(
         new Set(products.map((product) => product.AnneeApparition))
-      ).sort((a, b) => a - b); 
+      ).sort((a, b) => a - b);
       const yearOptions = years.map((year) => ({
         value: year.toString(),
         label: year.toString(),
@@ -187,7 +190,7 @@ export default function SearchProduct() {
 
     try {
       await fetch(
-        `http://localhost:3000/api/instat/product/delete/${productId}`,
+        `http://localhost:3000/api/instat/product/delete/${productId}/${userId}`,
         {
           method: "DELETE",
         }
@@ -211,7 +214,7 @@ export default function SearchProduct() {
     event.stopPropagation();
     try {
       await fetch(
-        `http://localhost:3000/api/instat/product/update/${selectedProduct?.id_product}`,
+        `http://localhost:3000/api/instat/product/update/${selectedProduct?.id_product}/${userId}`,
         {
           method: "PUT",
           headers: {

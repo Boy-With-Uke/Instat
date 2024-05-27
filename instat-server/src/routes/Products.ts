@@ -46,14 +46,25 @@ router.post("/new/:userId", async (req, res) => {
         TrimestreApparition,
       },
     });
+    const newNotif = await prisma.notification.create({
+      data: {
+        user: {
+          connect: {
+            id_user: userId,
+          },
+        },
+        typeDajout: "product",
+        typeAction: "Ajout",
+      },
+    });
     const message = "The product has been created successfully";
-    res.json({ message, product });
+    res.json({ message, product, newNotif });
   } catch (error) {
     res.status(500).json(`Error : ${error}`);
   }
 });
 
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id/:userId", async (req, res) => {
   const { sh8_product, libelle_product, AnneeApparition, TrimestreApparition } =
     req.body;
   const id_product = parseInt(req.params.id);
@@ -83,6 +94,18 @@ router.put("/update/:id", async (req, res) => {
       },
       include: { flux: true },
     });
+    const userId = parseInt(req.params.userId);
+    const newNotif = await prisma.notification.create({
+      data: {
+        user: {
+          connect: {
+            id_user: userId,
+          },
+        },
+        typeDajout: "product",
+        typeAction: "Modification",
+      },
+    });
     const message = "The product has been updated successfully";
     res.json({ message, updatedProduct });
   } catch (error) {
@@ -90,7 +113,7 @@ router.put("/update/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id/:userId", async (req, res) => {
   const id_product = parseInt(req.params.id);
   if (!id_product || isNaN(id_product)) {
     return res.status(400).json({ error: "Id must be a number" });
@@ -98,6 +121,18 @@ router.delete("/delete/:id", async (req, res) => {
   try {
     await prisma.product.delete({
       where: { id_product: id_product },
+    });
+    const userId = parseInt(req.params.userId);
+    const newNotif = await prisma.notification.create({
+      data: {
+        user: {
+          connect: {
+            id_user: userId,
+          },
+        },
+        typeDajout: "product",
+        typeAction: "Suppression",
+      },
     });
     const message = "The product has been deleted successfully";
     res.json({ message });

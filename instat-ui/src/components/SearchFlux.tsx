@@ -19,7 +19,7 @@ import exportFromJSON from "export-from-json";
 import Form from "react-bootstrap/Form";
 import LibelleDropdown from "./LibelleDropDown";
 import Swal from "sweetalert2";
-
+import Cookies from "js-cookie";
 export default function SearchFlux() {
   type Flux = {
     id_flux: number;
@@ -36,6 +36,8 @@ export default function SearchFlux() {
     prix_unitaire: number;
     prix_unitaire_moyenne_annuelle: number;
   };
+  const userCoockies = Cookies.get("user");
+  const userId = userCoockies;
   const fluxBase = [
     { value: "all", label: "Type" },
     { value: "E", label: "Exportation" },
