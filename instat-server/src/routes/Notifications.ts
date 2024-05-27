@@ -42,4 +42,20 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.delete("/delete/all", async (req, res) => {
+  try {
+    const notifications = await prisma.notification.findMany({});
+    const deletedNotif = await prisma.notification.deleteMany({
+      where: {
+        id_notification: {
+          in: notifications.map((notification) => notification.id_notification),
+        },
+      },
+    });
+    res.status(200).json({ deletedNotif });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 export default router;

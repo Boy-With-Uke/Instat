@@ -190,7 +190,7 @@ router.put("/update/:id/:userId", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id/:userId", async (req, res) => {
+router.delete("/delete/fromNotif/:id", async (req, res) => {
   const id_flux = parseInt(req.params.id);
   if (!id_flux || isNaN(id_flux)) {
     return res
@@ -204,6 +204,7 @@ router.delete("/delete/:id/:userId", async (req, res) => {
         sh8: true,
         type: true,
         annee: true,
+        dateAjout: true,
       },
     });
 
@@ -213,32 +214,35 @@ router.delete("/delete/:id/:userId", async (req, res) => {
     const sh8 = willDelete?.sh8 as string;
     const type = willDelete?.type as string;
     const annee = willDelete?.annee as number;
+    const createdAt = new Date(
+      Math.floor(willDelete?.dateAjout.getTime() / 1000) * 1000
+    ); // Truncate to seconds
+
     const deletedFlux = await prisma.flux.delete({
       where: { id_flux },
     });
     await updatePrixAnnuelle(sh8, annee, type);
-    const userId = parseInt(req.params.userId);
-    const userDid = await prisma.user.findFirst({
+
+    // Delete notifications associated with the deleted flux
+    const notifications = await prisma.notification.findMany({
       where: {
-        id_user: userId,
+        dateCreated: {
+          lte: createdAt, // Ignore milliseconds
+          gte: new Date(createdAt.getTime() - 1000 * 60), // Allow for 1 minute difference
+        },
+        typeDajout: "flux",
       },
     });
-    const newNotif = await prisma.notification.create({
-      data: {
-        user: {
-          connect: {
-            id_user: userId,
-          },
+    const deletedNotif = await prisma.notification.deleteMany({
+      where: {
+        id_notification: {
+          in: notifications.map((notification) => notification.id_notification),
         },
-        message: `L'utilisateur avec l'email ${userDid?.email} a supprimmer le flux  avec le sh8:${deletedFlux.sh8}`,
-
-        typeDajout: "flux",
-        typeAction: "Supression",
       },
     });
 
     const message = "The flux has been deleted successfully";
-    res.json({ message });
+    res.json({ message, deletedNotif });
   } catch (error) {
     res.status(500).send("Error deleting flux, error: " + error);
   }

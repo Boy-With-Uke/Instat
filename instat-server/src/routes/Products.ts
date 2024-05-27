@@ -214,5 +214,21 @@ router.get("/findMany/:annee/:trimestre", async (req, res) => {
     res.status(500).send("Error finding the flux, error: " + error);
   }
 });
+router.delete("/fromNotif/:id", async (req, res) => {
+  const id_product = parseInt(req.params.id);
+  if (!id_product || isNaN(id_product)) {
+    return res.status(400).json({ error: "Id must be a number" });
+  }
+  try {
+    const deletedProduct = await prisma.product.delete({
+      where: { id_product: id_product },
+    });
+
+    const message = "deleted successfully";
+    res.json({ message, deletedProduct });
+  } catch (error) {
+    res.status(500).send("Error deleting flux, error: " + error);
+  }
+});
 
 export default router;

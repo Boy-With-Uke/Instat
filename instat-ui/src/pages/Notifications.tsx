@@ -209,6 +209,111 @@ export default function Notifications() {
     }
   };
 
+  function reloadPage() {
+    window.location.reload();
+  }
+
+  const clearNotifs = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/instat/notification/delete/all",
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await response.json();
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "Suppresion de tous les notifications",
+      });
+      console.log(data);
+      fetchNotifs();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const deleteAllFlux = async (data: any) => {
+    if (data.length <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "",
+        text: `Aucun produits a supprimer`,
+      });
+      return;
+    }
+
+    try {
+      // Itérer sur chaque ID de produit dans data
+      for (const fluxList of data) {
+        await fetch(
+          `http://localhost:3000/api/instat/flux/delete/fromNotif/${fluxList.id_flux}`,
+          {
+            method: "DELETE",
+          }
+        );
+      }
+      setShowFilteredFluxs(false);
+      // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "L'annulation d'ajouts de tous les flux est un succes",
+      });
+
+      fetchFlux();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const deleteAllproduct = async (data: any) => {
+    console.log("Data à supprimer:", data);
+    if (data.length <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "",
+        text: `Aucun produit à supprimer`,
+      });
+      return;
+    }
+
+    try {
+      // Itérer sur chaque ID de produit dans data
+      for (const productList of data) {
+        console.log(`Suppression du produit ID: ${productList.id_product}`);
+        const response = await fetch(
+          `http://localhost:3000/api/instat/product/fromNotif/${productList.id_product}`,
+          {
+            method: "DELETE",
+          }
+        );
+        console.log(
+          `Réponse de la suppression du produit ID: ${productList.id_product}`,
+          response
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Erreur lors de la suppression du produit ID: ${productList.id_product}`
+          );
+        }
+      }
+      console.log("Tous les produits ont été supprimés.");
+      // Une fois que toutes les suppressions sont effectuées, mettre à jour l'état pour vider listProduct
+      fetchProduct();
+      Swal.fire({
+        icon: "success",
+        title: "Succès",
+        text: "La suppression de ces produits est un succès",
+      });
+      setShowFilteredProduct(false);
+    } catch (error) {
+      console.error("Erreur lors de la suppression des produits:", error);
+    }
+  };
+
   return (
     <>
       <div className="container-fluid bg-dark bg-gradient" id="mainContainer">
@@ -331,10 +436,32 @@ export default function Notifications() {
                             />{" "}
                           </div>
                         </Col>
+                        <Col
+                          xs={6}
+                          md={6}
+                          style={{ display: "flex" }}
+                          className="colExportation"
+                        >
+                          <Button
+                            className="buttonMain"
+                            style={{
+                              marginLeft: "46%",
+                              height: "40px",
+                            }}
+                            variant="danger"
+                            onClick={() => deleteAllFlux(filteredFluxs)}
+                          >
+                            Annuler l'ajout de ces flux
+                          </Button>
+                        </Col>
                       </div>
                     </>
                   ) : (
-                    <p>Aucun flux trouvé pour cette date.</p>
+                    <>
+                      <Row>
+                        <p>L'action a deja ete annuler.</p>
+                      </Row>
+                    </>
                   )}
                 </Container>
               </Modal.Body>
@@ -405,6 +532,7 @@ export default function Notifications() {
                             ))}
                         </tbody>
                       </table>
+
                       <div className="row pagination">
                         <Col xs={6} md={6} style={{ display: "flex" }}>
                           <div style={{ marginLeft: "75%" }}>
@@ -430,6 +558,24 @@ export default function Notifications() {
                               activeClassName={"active"}
                             />{" "}
                           </div>
+                        </Col>
+                        <Col
+                          xs={6}
+                          md={6}
+                          style={{ display: "flex" }}
+                          className="colExportation"
+                        >
+                          <Button
+                            className="buttonMain"
+                            style={{
+                              marginLeft: "36%",
+                              height: "40px",
+                            }}
+                            variant="danger"
+                            onClick={() => deleteAllproduct(filteredProduct)}
+                          >
+                            Annuler l'ajout de ces produit
+                          </Button>
                         </Col>
                       </div>
                     </>
@@ -494,6 +640,23 @@ export default function Notifications() {
                       activeClassName={"active"}
                     />
                   </div>
+                </Col>
+                <Col
+                  xs={6}
+                  md={6}
+                  style={{ display: "flex" }}
+                  className="colExportation"
+                >
+                  <Button
+                    className="buttonMain"
+                    style={{
+                      marginLeft: "36%",
+                    }}
+                    variant="danger"
+                    onClick={(event) => clearNotifs(event)}
+                  >
+                    Effacer les notifications
+                  </Button>
                 </Col>
               </div>
             </div>
