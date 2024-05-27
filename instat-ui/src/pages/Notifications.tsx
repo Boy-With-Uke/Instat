@@ -69,16 +69,19 @@ export default function Notifications() {
   const [selectedNotification, setSelectedNotifications] =
     useState<Notification | null>(null);
   const [filteredFluxs, setFilteredFluxs] = useState<Flux[]>([]);
+  const [filteredProduct2, setFilteredProduct2] = useState<Product[]>([]);
   const [filteredProduct, setFilteredProduct] = useState<Product[]>([]);
 
   const [isShow, setIsShow] = useState(false);
   const [showFilteredFluxs, setShowFilteredFluxs] = useState(false);
   const [showFilteredProduct, setShowFilteredProduct] = useState(false);
+  const [showFilteredProduct2, setShowFilteredProduct2] = useState(false);
 
   function onHide() {
     setIsShow(false);
     setShowFilteredFluxs(false);
     setShowFilteredProduct(false);
+    setShowFilteredProduct2(false);
   }
 
   const navigate = useNavigate();
@@ -206,6 +209,17 @@ export default function Notifications() {
 
       setFilteredProduct(filtered);
       setShowFilteredProduct(true);
+    } else if (notif.typeAction === "Modification") {
+      if (notif.typeDajout === "product") {
+        const filtered = products.filter((product) =>
+          moment(product.dateModif).isSame(
+            moment(notif.dateCreated).startOf("second"),
+            "second"
+          )
+        );
+        setFilteredProduct2(filtered);
+        setShowFilteredProduct2(true);
+      }
     }
   };
 
@@ -327,7 +341,7 @@ export default function Notifications() {
           >
             <Modal show={isShow} onHide={onHide} className="modal" size="lg">
               <Modal.Header closeButton>
-                <Modal.Title>Sélectionner le fichier</Modal.Title>
+                <Modal.Title></Modal.Title>
               </Modal.Header>
               <Modal.Body className="grid-example">
                 <Container>
@@ -541,7 +555,7 @@ export default function Notifications() {
                               nextLabel={">"}
                               breakLabel={"..."}
                               pageCount={Math.ceil(
-                                notifications.length / itemsPerPage
+                                filteredProduct.length / itemsPerPage
                               )}
                               marginPagesDisplayed={2}
                               pageRangeDisplayed={5}
@@ -586,6 +600,107 @@ export default function Notifications() {
               </Modal.Body>
             </Modal>
 
+            <Modal
+              show={showFilteredProduct2}
+              onHide={onHide}
+              className="modal"
+              size="xl"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>
+                  Produit ajoutés le{" "}
+                  {moment(selectedNotification?.dateCreated).format(
+                    "MMMM Do YYYY"
+                  )}
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="grid-example">
+                <Container>
+                  {filteredProduct2.length > 0 ? (
+                    <>
+                      <table className="table">
+                        <thead className="table-dark">
+                          <tr>
+                            <th scope="col" className="bordering-left">
+                              SH8
+                            </th>
+                            <th scope="col">SH2</th>
+                            <th scope="col" style={{ maxHeight: "50px" }}>
+                              Libelle
+                            </th>
+                            <th scope="col">Anne d'apparition</th>
+                            <th
+                              scope="col"
+                              className="bordering-right"
+                              style={{ minWidth: "95px" }}
+                            >
+                              Trimestre d'apparition
+                            </th>
+                          </tr>
+                        </thead>
+                        <br />
+                        <tbody className="flux-table">
+                          {filteredProduct2
+                            .slice(startIndexProduct, endIndexProduct)
+                            .map((product) => (
+                              <tr key={product.id_product}>
+                                <td>{product.sh8_product}</td>
+                                <td>{product.sh2_product}</td>
+                                <td
+                                  style={{
+                                    maxHeight: "50px",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {product.libelle_product.length > 20 ? (
+                                    <LibelleDropdown
+                                      libelle={product.libelle_product}
+                                    />
+                                  ) : (
+                                    product.libelle_product
+                                  )}
+                                </td>
+                                <td>{product.AnneeApparition}</td>
+                                <td>{product.TrimestreApparition} </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+
+                      <div className="row pagination">
+                        <Col xs={6} md={6} style={{ display: "flex" }}>
+                          <div style={{ marginLeft: "75%" }}>
+                            <ReactPaginate
+                              previousLabel={"<"}
+                              nextLabel={">"}
+                              breakLabel={"..."}
+                              pageCount={Math.ceil(
+                                filteredProduct2.length / itemsPerPage
+                              )}
+                              marginPagesDisplayed={2}
+                              pageRangeDisplayed={5}
+                              onPageChange={handlePageChangeModal2}
+                              containerClassName={"pagination"}
+                              pageClassName={"page-item"}
+                              pageLinkClassName={"page-link"}
+                              previousClassName={"page-item"}
+                              previousLinkClassName={"page-link"}
+                              nextClassName={"page-item"}
+                              nextLinkClassName={"page-link"}
+                              breakClassName={"page-item"}
+                              breakLinkClassName={"page-link"}
+                              activeClassName={"active"}
+                            />{" "}
+                          </div>
+                        </Col>
+                      </div>
+                    </>
+                  ) : (
+                    <p>Aucun produit trouvé pour cette date.</p>
+                  )}
+                </Container>
+              </Modal.Body>
+            </Modal>
             <div>
               <table className="table">
                 <thead className="table-dark">
