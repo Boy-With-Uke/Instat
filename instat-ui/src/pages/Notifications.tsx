@@ -93,6 +93,13 @@ export default function Notifications() {
   const itemsPerPage = 10;
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+  //Flux
+  const [currentPageFlux, setCurrentPageFlux] = useState(0);
+  const [currentPageProduct, setCurrentPageProduct] = useState(0);
+  const startIndexFlux = currentPageFlux * itemsPerPage;
+  const endIndexFlux = startIndexFlux + itemsPerPage;
+  const startIndexProduct = currentPageProduct * itemsPerPage;
+  const endIndexProduct = startIndexProduct + itemsPerPage;
 
   const fetchNotifs = async () => {
     try {
@@ -165,23 +172,36 @@ export default function Notifications() {
   const handlePageChange = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
+  const handlePageChangeModal1 = (selectedPage: { selected: number }) => {
+    setCurrentPageFlux(selectedPage.selected);
+  };
+
+  const handlePageChangeModal2 = (selectedPage: { selected: number }) => {
+    setCurrentPageProduct(selectedPage.selected);
+  };
 
   const handleNotifClick = (notif: Notification) => {
     if (notif.typeAction === "Supression") {
       setIsShow(true);
       setSelectedNotifications(notif);
     } else if (notif.typeAction === "Ajout" && notif.typeDajout === "flux") {
-      // Filtrer les flux par dateAjout
+      // Filtrer les flux par dateAjout à la seconde près
       const filtered = fluxs.filter((flux) =>
-        moment(flux.dateAjout).isSame(notif.dateCreated, "day")
+        moment(flux.dateAjout).isSame(
+          moment(notif.dateCreated).startOf("second"),
+          "second"
+        )
       );
 
       setFilteredFluxs(filtered);
       setShowFilteredFluxs(true);
     } else if (notif.typeAction === "Ajout" && notif.typeDajout === "product") {
-      // Filtrer les flux par dateAjout
+      // Filtrer les produits par dateAjout à la seconde près
       const filtered = products.filter((product) =>
-        moment(product.dateAjout).isSame(notif.dateCreated, "day")
+        moment(product.dateAjout).isSame(
+          moment(notif.dateCreated).startOf("second"),
+          "second"
+        )
       );
 
       setFilteredProduct(filtered);
@@ -255,32 +275,34 @@ export default function Notifications() {
                         </thead>
                         <br />
                         <tbody className="flux-table">
-                          {filteredFluxs.slice(startIndex, endIndex).map((flux) => (
-                            <tr key={flux.id_flux}>
-                              <td>{flux.type}</td>
-                              <td>{flux.annee}</td>
-                              <td>{flux.trimestre}</td>
-                              <td>{flux.sh8}</td>
-                              <td
-                                style={{
-                                  maxHeight: "50px",
-                                  overflow: "hidden",
-                                }}
-                              >
-                                {flux.libelle.length > 20 ? (
-                                  <LibelleDropdown libelle={flux.libelle} />
-                                ) : (
-                                  flux.libelle
-                                )}
-                              </td>
-                              <td>{flux.valeur}</td>
-                              <td>{flux.poids_net}</td>
-                              <td>{flux.quantite}</td>
-                              <td>{flux.prix_unitaire}</td>
-                              <td>{flux.prix_unitaire_moyenne_annuelle}</td>
-                              <td>{flux.sh2}</td>
-                            </tr>
-                          ))}
+                          {filteredFluxs
+                            .slice(startIndexFlux, endIndexFlux)
+                            .map((flux) => (
+                              <tr key={flux.id_flux}>
+                                <td>{flux.type}</td>
+                                <td>{flux.annee}</td>
+                                <td>{flux.trimestre}</td>
+                                <td>{flux.sh8}</td>
+                                <td
+                                  style={{
+                                    maxHeight: "50px",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {flux.libelle.length > 20 ? (
+                                    <LibelleDropdown libelle={flux.libelle} />
+                                  ) : (
+                                    flux.libelle
+                                  )}
+                                </td>
+                                <td>{flux.valeur}</td>
+                                <td>{flux.poids_net}</td>
+                                <td>{flux.quantite}</td>
+                                <td>{flux.prix_unitaire}</td>
+                                <td>{flux.prix_unitaire_moyenne_annuelle}</td>
+                                <td>{flux.sh2}</td>
+                              </tr>
+                            ))}
                         </tbody>
                       </table>
                       <div className="row pagination">
@@ -295,7 +317,7 @@ export default function Notifications() {
                               )}
                               marginPagesDisplayed={2}
                               pageRangeDisplayed={5}
-                              onPageChange={handlePageChange}
+                              onPageChange={handlePageChangeModal1}
                               containerClassName={"pagination"}
                               pageClassName={"page-item"}
                               pageLinkClassName={"page-link"}
@@ -325,7 +347,7 @@ export default function Notifications() {
             >
               <Modal.Header closeButton>
                 <Modal.Title>
-                  Flux ajoutés le{" "}
+                  Produit ajoutés le{" "}
                   {moment(selectedNotification?.dateCreated).format(
                     "MMMM Do YYYY"
                   )}
@@ -358,7 +380,7 @@ export default function Notifications() {
                         <br />
                         <tbody className="flux-table">
                           {filteredProduct
-                            .slice(startIndex, endIndex)
+                            .slice(startIndexProduct, endIndexProduct)
                             .map((product) => (
                               <tr key={product.id_product}>
                                 <td>{product.sh8_product}</td>
@@ -395,7 +417,7 @@ export default function Notifications() {
                               )}
                               marginPagesDisplayed={2}
                               pageRangeDisplayed={5}
-                              onPageChange={handlePageChange}
+                              onPageChange={handlePageChangeModal2}
                               containerClassName={"pagination"}
                               pageClassName={"page-item"}
                               pageLinkClassName={"page-link"}
@@ -412,7 +434,7 @@ export default function Notifications() {
                       </div>
                     </>
                   ) : (
-                    <p>Aucun flux trouvé pour cette date.</p>
+                    <p>Aucun produit trouvé pour cette date.</p>
                   )}
                 </Container>
               </Modal.Body>
