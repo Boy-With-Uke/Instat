@@ -30,6 +30,8 @@ export default function SearchProduct() {
     libelle_product: string;
     AnneeApparition: number;
     TrimestreApparition: number;
+    dateAjout: Date;
+    dateModif: Date;
   };
   const userCoockies = Cookies.get("user");
   const userId = userCoockies;
@@ -133,7 +135,12 @@ export default function SearchProduct() {
         label: year.toString(),
       }));
       const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
-      setProducts(products);
+
+      const sortedProducts = products.sort(
+        (a, b) =>
+          new Date(b.dateAjout).getTime() - new Date(a.dateAjout).getTime()
+      );
+      setProducts(sortedProducts);
 
       setYearOptions(defaultAnnee);
     } catch (error) {
@@ -152,7 +159,11 @@ export default function SearchProduct() {
             `http://localhost:3000/api/instat/product/findMany/${annneeOption}/${trimestreOptions}`
           );
           const products: Product[] = await reponse.json();
-          setProducts(products);
+          const sortedProducts = products.sort(
+            (a, b) =>
+              new Date(b.dateAjout).getTime() - new Date(a.dateAjout).getTime()
+          );
+          setProducts(sortedProducts);
         } catch (e) {
           console.log(e);
         }
@@ -498,7 +509,7 @@ export default function SearchProduct() {
         }}
       >
         <div className="col-8 filter">
-          <Button
+          {/* <Button
             className="buttonMain"
             variant="warning"
             style={{
@@ -509,7 +520,7 @@ export default function SearchProduct() {
           >
             Actualiser {"         "}
             <FontAwesomeIcon icon={faRotateRight} />
-          </Button>
+          </Button> */}
           <Select
             className=".custom-select"
             defaultValue={{ value: "All", label: "Annee" }}

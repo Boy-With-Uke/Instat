@@ -35,6 +35,8 @@ export default function SearchFlux() {
     quantite: number;
     prix_unitaire: number;
     prix_unitaire_moyenne_annuelle: number;
+    dateAjout: Date;
+    dateModif: Date;
   };
   const userCoockies = Cookies.get("user");
   const userId = userCoockies;
@@ -186,25 +188,30 @@ export default function SearchFlux() {
   const fetchFlux = async () => {
     try {
       const reponse = await fetch("http://localhost:3000/api/instat/flux/");
-
       const fluxs: Flux[] = await reponse.json();
       const years = Array.from(new Set(fluxs.map((flux) => flux.annee))).sort(
         (a, b) => a - b
       );
-
+  
       // Utiliser les années uniques
-
       const yearOptions = years.map((year) => ({
         value: year.toString(),
         label: year.toString(),
       }));
       const defaultAnnee = [{ value: "all", label: "Annee" }, ...yearOptions];
-      setFluxs(fluxs);
+  
+      // Trier les flux par date d'ajout (du plus récent au plus ancien)
+      const sortedFluxs = fluxs.sort(
+        (a, b) => new Date(b.dateAjout).getTime() - new Date(a.dateAjout).getTime()
+      );
+  
+      setFluxs(sortedFluxs);
       setYearOptions(defaultAnnee);
     } catch (e) {
       console.log(e);
     }
   };
+  
   useEffect(() => {
     fetchFlux();
   }, []);
@@ -244,6 +251,7 @@ export default function SearchFlux() {
       alert(`Error finding the product: ${error}`);
     }
   };
+  
 
   const handleDelete = async (event: React.MouseEvent, fluxId: number) => {
     event.stopPropagation();
@@ -593,7 +601,7 @@ export default function SearchFlux() {
         }}
       >
         <div className="col-8 filter">
-          <Button
+          {/* <Button
             className="buttonMain"
             variant="warning"
             style={{
@@ -604,7 +612,7 @@ export default function SearchFlux() {
           >
             Actualiser {"         "}
             <FontAwesomeIcon icon={faRotateRight} />
-          </Button>
+          </Button> */}
           <Select
             className=".custom-select"
             defaultValue={{ value: "all", label: "Type" }}
